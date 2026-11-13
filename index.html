@@ -636,7 +636,7 @@
       // 한글 조합 중에는 입력값이 잠깐 폭을 넘을 수 있어(조합이 끝나야 잘라냄), 화면에는 넘친 글자를 그리지 않는다
       x = text(x, END_Y, clip(input.value), 'cmd');
       if (blink) put(x, END_Y, '█', 'cur');
-      if (!input.value) text(x + 2, END_Y, coarse ? '눌러서 입력하면 모두에게 보여요' : '메시지를 입력하면 모두에게 보여요', 'lab');
+      if (!input.value) text(x + 2, END_Y, coarse ? '눌러서 입력하면 모두에게 보여요' : '메시지를 입력하면 방명록 눈이 내려요❄️', 'lab');
     }
 
     // 입력한 문구는 트리 앞으로 지나가게 그려서 읽을 수 있게 한다
