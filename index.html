@@ -89,7 +89,7 @@
         .screen-wrap { position: relative; font-size: 16px; font-size: min(18px, calc((100vw - 72px) / 37), calc((100vh - 104px) / 45)); }
         #screen { position: relative; z-index: 1; display: block; padding: 14px 18px 18px; line-height: 1.2; white-space: pre; font-family: inherit; font-size: inherit; }
         @media (max-width: 599px) { #screen { padding: 10px 10px 14px; } }
-        /* 트리를 연달아 눌러도 폰이 화면을 확대하거나 회색으로 깜빡이지 않게 */
+        /* 선물 상자를 연달아 눌러도 폰이 화면을 확대하거나 회색으로 깜빡이지 않게 */
         .js #screen { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         /* ---- JS 없이 보이는 정적 화면용: CSS 애니메이션과 CSS 눈 (JS가 돌면 매 프레임 다시 그리므로 쓰이지 않음) ---- */
@@ -950,22 +950,30 @@
         });
         // PC는 열자마자, 또는 창 아무 데나 클릭하면 바로 입력할 수 있게 한다 (폰은 프롬프트 줄을 눌러야 키보드가 뜬다)
         document.querySelector('.term').addEventListener('click', () => { if (!coarse) input.focus({ preventScroll: true }); });
-        // 트리(꼭대기 별 포함)를 누르면 0시 축하 효과를 다시 보여 준다. 테마는 날짜 그대로 둔다
-        // (크리스마스 전이면 평소 트리, 12/25부터는 화이트 크리스마스). 인트로 중·효과가 도는 중에는 무시한다
-        const TREE_HIT = new Set(tree.map(c => c.y * W + c.x)).add(STAR_Y * W + CX);
-        function onTree(ev) {
+        // 숨은 트릭: 가장 오른쪽 선물 상자를 누르면 0시 축하 효과를 다시 보여 준다. 테마는 날짜 그대로 둔다
+        // (크리스마스 전이면 평소 트리, 12/25부터는 화이트 크리스마스). 인트로 중·효과가 도는 중에는 무시한다.
+        // click 은 쓰지 않는다: 화면을 매 프레임 새로 그려서, 누른 글자 요소가 손을 떼기 전에 바뀌면 브라우저가 click 을 보내지 않는다.
+        // 대신 누른 곳과 뗀 곳을 직접 비교한다 (조금 흔들려도 되고, 스크롤하면 브라우저가 pointercancel 을 보내 취소된다)
+        const GIFT = GIFTS[GIFTS.length - 1];
+        function onGift(ev) {
             if (performance.now() - t0 < T.end) return false;
             // 누른 위치 → 글자 칸 좌표 (화면 크기에 따라 글자 크기·여백이 바뀌므로 그때그때 잰다)
             const r = screen.getBoundingClientRect(), cs = getComputedStyle(screen);
             const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
             const x = Math.floor((ev.clientX - r.left - pl) / ((r.width - pl - pr) / W));
             const y = Math.floor((ev.clientY - r.top - pt) / ((r.height - pt - pb) / H));
-            // 손가락으로 누르면 한 칸 정도 빗나가기 쉬워 주변 1칸까지 트리로 본다
-            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (TREE_HIT.has((y + dy) * W + (x + dx))) return true;
-            return false;
+            // 상자(리본 줄 포함 3줄)와 손가락이 빗나가기 쉬운 둘레 1칸까지
+            return x >= GIFT.x - 1 && x <= GIFT.x + GIFT.w && y >= BASE_Y - 1 && y <= BASE_Y + 2;
         }
-        screen.addEventListener('click', ev => { const now = performance.now(); if (!booming(now) && onTree(ev)) startBoom(now); });
-        if (!coarse) screen.addEventListener('mousemove', ev => { screen.style.cursor = onTree(ev) ? 'pointer' : ''; });
+        let press = null;
+        screen.addEventListener('pointerdown', ev => { press = onGift(ev) ? { x: ev.clientX, y: ev.clientY } : null; });
+        addEventListener('pointercancel', () => { press = null; });
+        addEventListener('pointerup', ev => {
+            const p = press; press = null;
+            if (!p || Math.hypot(ev.clientX - p.x, ev.clientY - p.y) > 12 || !onGift(ev)) return;
+            const now = performance.now();
+            if (!booming(now)) startBoom(now);
+        });
         if (!coarse) input.focus({ preventScroll: true });
         listen();
         countVisit();
