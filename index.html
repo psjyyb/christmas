@@ -38,6 +38,7 @@
     border-radius: 12px;
     box-shadow: 0 30px 90px rgba(0,0,0,.65), 0 0 140px rgba(255,190,90,.05);
     overflow: hidden;
+    flex-shrink: 0;   /* 공간이 모자랄 때 줄어들면 아래 줄(입력칸)이 잘린다 → 줄이지 말고 페이지가 스크롤되게 */
   }
   .bar {
     position: relative; height: 34px;
@@ -66,7 +67,7 @@
            box-shadow: 0 20px 60px rgba(0,0,0,.6); }
   /* 터미널 아래에 붙을 때는 유튜브가 허용하는 최소 크기(200×200)로 작게. 폰에서는 미니 플레이어처럼 오른쪽에 붙인다 */
   /* 202px = 영상 200px + 좌우 테두리 1px씩 (border-box라 테두리가 폭에 포함된다) */
-  .radio.open { display: block; position: relative; width: 202px; margin: 0 0 auto; align-self: center; }
+  .radio.open { display: block; position: relative; width: 202px; margin: 0 0 auto; align-self: center; flex-shrink: 0; }
   @media (max-width: 599px) { .radio.open:not(.docked) { align-self: flex-end; } }
   .radio.open.docked { position: fixed; right: 16px; bottom: 16px; width: 288px; margin: 0; }
   .radio.muted .name { display: none; }   /* 좁은 창에서 '소리 켜기' 안내와 곡명이 겹치지 않게 */
@@ -257,7 +258,10 @@
 
   const W = 61, CX = 30;
   const USER = '박성준';
-  const screen = document.getElementById('screen');
+  // 보내지 못하게 막을 단어. 따옴표로 감싸 쉼표로 이어 적는다 (예: ['단어1', '단어2', 'word']).
+  // 이 단어가 들어간 문구는 보내지 않고 "금지된 단어" 알림을 띄운다. 영문 대소문자, 글자 사이 공백·점은 구분하지 않는다
+  const BANNED = [];
+  const screen =document.getElementById('screen');
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rnd = Math.random;
   const pick = a => a[Math.floor(rnd() * a.length)];
@@ -394,13 +398,24 @@
     // 1.2초 간격으로 내리면 한 문구가 바닥까지 가는 약 12초 동안 10개 정도가 화면에 있으므로 여유 있게 12개까지 둔다
     if (drops.length > 12) drops.shift();
   }
-  // 다른 사람이 보낸 문구 대기열: 한꺼번에 몰려와도 1.2초 간격으로 하나씩 내린다
-  const inbox = [];
-  let nextRelease = 0;
+  // 방명록(board): 최근 BACKLOG개를 오래된 것부터 1.2초 간격으로 하나씩 내리고, 끝까지 내린 뒤 화면의 문구가
+  // 모두 바닥에 닿으면 처음부터 다시 내린다. 접속해 있는 동안 새로 들어온 문구(inbox)는 차례를 기다리지 않고 먼저 내린다
+  const inbox = [], board = [];
+  let nextRelease = 0, boardAt = 0;
+  function remember(msg, shownNow) {
+    // 방금 내린 새 문구는 이번 바퀴 끝에서 곧바로 또 내려오지 않게, 이번 바퀴에서는 건너뛰고 다음 바퀴부터 돈다
+    board.push({ msg, skip: shownNow });
+    if (board.length > BACKLOG) { board.shift(); if (boardAt > 0) boardAt--; }
+  }
 
   function update(dt) {
     const nowP = performance.now();
-    if (inbox.length && nowP >= nextRelease && nowP - t0 >= T.end) { dropMessage(inbox.shift()); nextRelease = nowP + 1200; }
+    if (nowP >= nextRelease && nowP - t0 >= T.end) {
+      let msg = inbox.shift();
+      if (msg === undefined && board.length && boardAt >= board.length && !drops.length) boardAt = 0;   // 한 바퀴 끝 → 처음부터
+      while (msg === undefined && boardAt < board.length) { const b = board[boardAt++]; if (b.skip) b.skip = false; else msg = b.msg; }
+      if (msg !== undefined) { dropMessage(msg); nextRelease = nowP + 1200; }
+    }
     for (let i = drops.length - 1; i >= 0; i--) {
       const d = drops[i];
       d.y += d.vy * dt;
@@ -440,7 +455,15 @@
   const chs = Array.from({ length: H }, () => new Array(W));
   const cls = Array.from({ length: H }, () => new Array(W));
   const clear = () => { for (let y = 0; y < H; y++) { chs[y].fill(' '); cls[y].fill(''); } };
-  const put = (x, y, c, k) => { if (x >= 0 && x < W && y >= 0 && y < H) { chs[y][x] = c; cls[y][x] = k || ''; } };
+  // 전각 글자(2칸)의 한쪽 반만 덮어쓰면 그 줄이 61칸에서 어긋나 화면 폭이 늘었다 줄었다 한다
+  // (방명록 문구끼리 겹쳐 내려올 때). 그래서 짝을 잃는 나머지 반쪽은 빈칸으로 바꾼다
+  const put = (x, y, c, k) => {
+    if (x < 0 || x >= W || y < 0 || y >= H) return;
+    const row = chs[y], rk = cls[y];
+    if (c !== '' && row[x] === '' && x > 0) { row[x - 1] = ' '; rk[x - 1] = ''; }   // 앞 전각 글자의 둘째 칸을 덮음 → 앞 글자 지움
+    if (x + 1 < W && row[x + 1] === '') { row[x + 1] = ' '; rk[x + 1] = ''; }       // 전각 글자의 첫 칸을 덮음 → 둘째 칸 자리 비움
+    row[x] = c; rk[x] = k || '';
+  };
   // 입력 문구에 들어올 수 있는 이모지(U+1F300~)도 화면에서 2칸을 차지한다
   const isWide = c => WIDE.test(c) || c.codePointAt(0) >= 0x1F300;
   const colsOf = s => { let n = 0; for (const c of s) n += isWide(c) ? 2 : 1; return n; };
@@ -604,9 +627,10 @@
     }
     if (e >= T.end) {
       let x = drawPrompt(END_Y);
-      x = text(x, END_Y, input.value, 'cmd');
+      // 한글 조합 중에는 입력값이 잠깐 폭을 넘을 수 있어(조합이 끝나야 잘라냄), 화면에는 넘친 글자를 그리지 않는다
+      x = text(x, END_Y, clip(input.value), 'cmd');
       if (blink) put(x, END_Y, '█', 'cur');
-      if (!input.value) text(x + 2, END_Y, coarse ? 'tap to type, everyone sees it' : 'type a message, everyone sees it', 'lab');
+      if (!input.value) text(x + 2, END_Y, coarse ? '눌러서 입력하면 모두에게 보여요' : '메시지를 입력하면 모두에게 보여요', 'lab');
     }
 
     // 입력한 문구는 트리 앞으로 지나가게 그려서 읽을 수 있게 한다
@@ -667,15 +691,35 @@
   probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font-size:100px;font-family:inherit';
   probe.textContent = '0'.repeat(100);
   document.body.appendChild(probe);
+  // 음악 창 자리도 함께 정한다: 터미널 옆에 둘 수 있으면 오른쪽 아래에 고정(docked), 아니면 터미널 아래에 붙인다.
+  // 아래에 붙일 때는 그 높이만큼 글자를 줄여야 입력 줄까지 한 화면에 들어온다. 두 배치 중 트리가 더 크게 보이는 쪽을 고른다
+  const RADIO_W = 288;              // CSS .radio.docked 폭
+  const RADIO_BELOW_H = 226 + 16;   // 아래에 붙을 때 창 높이(영상 200 + 제목줄 24 + 테두리 2) + 터미널과의 간격
   function fit() {
     const ratio = probe.getBoundingClientRect().width / 100 / 100;
     const small = innerWidth < 600;
     const padX = small ? 10 : 18, padY = small ? 10 : 14;
     const availW = innerWidth - 32 - 2 - padX * 2;
     const availH = innerHeight - 32 - 34 - 2 - padY * 2 - 4;
-    const fs = clamp(Math.min(availW / (W * ratio), availH / (H * 1.2)), 6, 22);
+    const byW = availW / (W * ratio), byH = h => h / (H * 1.2);
+    let fs = clamp(Math.min(byW, byH(availH)), 6, 22);
+    const radioEl = document.getElementById('radio');
+    const withRadio = radioEl.classList.contains('open');
+    let docked = false;
+    if (withRadio) {
+      // 고정하려면 터미널 양옆 여백이 각각 (플레이어 폭 + 32px) 이상이어야 겹치지 않는다 → 그 조건에서의 최대 글자 크기
+      const dockMax = (innerWidth - 2 * (RADIO_W + 32) - 2 * padX - 2) / (W * ratio);
+      const dockFs = Math.min(fs, dockMax);
+      // 폰(좁은 화면)은 원래 폭으로 크기가 정해지고 음악 창은 스크롤해서 보므로 높이를 빼지 않는다
+      // (빼면 키보드가 올라와 화면 높이가 줄 때 트리가 갑자기 작아진다)
+      const belowFs = clamp(Math.min(byW, byH(availH - (small ? 0 : RADIO_BELOW_H))), 6, 22);
+      docked = dockMax >= 6 && dockFs >= belowFs;
+      fs = docked ? dockFs : belowFs;
+    }
     screen.style.fontSize = fs.toFixed(2) + 'px';
     screen.style.padding = `${padY}px ${padX}px ${padY + 4}px`;
+    radioEl.classList.toggle('docked', withRadio && docked);
+    document.body.classList.toggle('radio-below', withRadio && !docked);
   }
   addEventListener('resize', fit);
   fit();
@@ -685,6 +729,10 @@
   const coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;   // 터치 기기(폰·태블릿)
   const MAX_IN = W - colsOf(` ${USER}@north-pole:~$ `) - 1;                      // 커서 1칸을 남긴 입력 가능 폭
   const clip = s => { let out = ''; for (const c of s) { if (colsOf(out + c) > MAX_IN) break; out += c; } return out; };
+  // 남은 칸만큼만 더 들어가게 브라우저 글자 수 제한(maxlength)을 맞춘다 → 칸이 다 차면 입력 자체가 막힌다.
+  // 한글 조합 중에는 값을 잘라내면 조합이 깨지므로 이 제한으로 막고, 조합 중이 아닐 때만 다시 계산한다
+  const setMax = () => { input.maxLength = input.value.length + Math.max(0, MAX_IN - colsOf(input.value)); };
+  setMax();
   let composing = false, pendingSubmit = false, lastSubmit = 0, lastSent = -1e9;
 
   // ---------- 문구 공유: Firebase Realtime Database(무료 Spark 요금제)에 쌓고 실시간으로 받는다.
@@ -696,15 +744,22 @@
   const BAD = ['시발', '씨발', '씨바', '시바', '쓰발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '개새끼', '개새', '새끼', '좆', '존나', '졸라',
                '지랄', 'ㅈㄹ', '닥쳐', '꺼져', '엿먹', '느금', '니미', '애미', '애비', 'fuck', 'shit', 'bitch', 'asshole', 'cunt'];
   const BAD_RE = BAD.map(w => new RegExp([...w].join('[\\s._-]*'), 'gi'));   // 사이에 공백·점을 끼워 넣어도 걸리게
-  // 받은 문구는 다른 사람이 보낸 임의의 글이므로: 줄바꿈·제어문자·방향 바꾸는 보이지 않는 문자 제거 → 욕설 가림 → 한 줄 폭으로 자름
+  // 금지어는 가리지 않고 아예 못 보내게 한다. 단어 안 공백은 빼고(사이 공백은 어차피 허용),
+  // 정규식 특수문자(+ ? 등)가 섞여도 글자 그대로 찾도록 이스케이프한다. 빈 칸('')은 무시한다
+  const BANNED_RE = BANNED.map(w => String(w).replace(/\s+/g, '')).filter(Boolean)
+    .map(w => new RegExp([...w].map(c => c.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('[\\s._-]*'), 'i'));
+  // 줄바꿈·제어문자·방향 바꾸는 보이지 않는 문자 제거 (보이지 않는 문자를 끼워 금지어를 피하는 것도 막힌다)
+  const strip = s => [...String(s)].filter(c => {
+    const n = c.codePointAt(0);
+    return n >= 32 && n !== 127 && !(n >= 0x200B && n <= 0x200F) && !(n >= 0x202A && n <= 0x202E) && !(n >= 0x2066 && n <= 0x2069);
+  }).join('').trim();
+  // 받은 문구는 다른 사람이 보낸 임의의 글이므로: 보이지 않는 문자 제거 → 욕설 가림 → 한 줄 폭으로 자름
   function clean(s) {
-    s = [...String(s)].filter(c => {
-      const n = c.codePointAt(0);
-      return n >= 32 && n !== 127 && !(n >= 0x200B && n <= 0x200F) && !(n >= 0x202A && n <= 0x202E) && !(n >= 0x2066 && n <= 0x2069);
-    }).join('').trim();
+    s = strip(s);
     for (const re of BAD_RE) s = s.replace(re, m => '*'.repeat([...m].length));
     return clip(s);
   }
+  const hasBanned = s => { s = strip(s); return BANNED_RE.some(re => re.test(s)); };
   function publish(text) {
     // 시간(t)은 서버 시각으로 채운다 — 규칙이 t == now 만 받으므로 시간을 조작한 글은 저장되지 않는다.
     // 문자열 본문은 단순 요청이라 CORS 사전 요청 없이 바로 보내진다. 실패해도 내 화면에는 이미 내려갔으니 조용히 넘긴다
@@ -716,14 +771,15 @@
     if (!window.EventSource) return;
     const seen = new Set();
     // 다른 사람이 쓴 임의의 데이터일 수 있으니 형식을 확인하고, 끊겼다 다시 붙을 때 같은 문구가 또 오므로 키로 중복을 거른다
-    const take = (key, v) => {
+    // live: 접속 중에 새로 들어온 문구 → 바로 내린다. 아니면 처음 받은 최근 묶음 → 방명록 순서대로 돈다
+    const take = (key, v, live) => {
       if (!v || typeof v.m !== 'string' || seen.has(key)) return;
       seen.add(key);
-      if (v.s === ME) return;
+      if (v.s === ME) return;   // 내가 보낸 문구는 보낼 때 이미 내리고 방명록에도 넣었다
       const text = clean(v.m);
       if (!text) return;
-      inbox.push(text);
-      if (inbox.length > BACKLOG + 10) inbox.shift();
+      if (live) { inbox.push(text); if (inbox.length > BACKLOG + 10) inbox.shift(); }
+      remember(text, live);
     };
     // 처음 연결(재연결 포함) 때 최근 문구 묶음이 path '/'로 한 번에 오고, 이후엔 새 문구가 하나씩 온다.
     // 푸시 키는 시간순이라 키 정렬 = 오래된 것부터
@@ -732,9 +788,9 @@
       try { d = JSON.parse(ev.data); } catch (_) { return; }
       if (!d || typeof d.path !== 'string') return;
       if (d.path === '/') {
-        if (d.data && typeof d.data === 'object') Object.keys(d.data).sort().forEach(k => take(k, d.data[k]));
+        if (d.data && typeof d.data === 'object') Object.keys(d.data).sort().forEach(k => take(k, d.data[k], false));
       } else {
-        take(d.path.slice(1).split('/')[0], d.data);
+        take(d.path.slice(1).split('/')[0], d.data, true);
       }
     };
     const es = new EventSource(`${DB}/messages.json?orderBy=${encodeURIComponent('"$key"')}&limitToLast=${BACKLOG}`);
@@ -745,21 +801,25 @@
   input.addEventListener('compositionend', () => {
     composing = false;
     input.value = clip(input.value);
+    setMax();
     if (pendingSubmit) { pendingSubmit = false; submit(); }
   });
   // 한글 조합 중에 잘라내면 조합이 깨지므로 조합이 끝난 뒤에만 폭을 맞춘다
-  input.addEventListener('input', () => { if (!composing) { const v = clip(input.value); if (v !== input.value) input.value = v; } });
+  input.addEventListener('input', () => { if (!composing) { const v = clip(input.value); if (v !== input.value) input.value = v; setMax(); } });
   function submit() {
     const now = performance.now();
     // 한글 입력기에 따라 Enter 한 번에 제출이 두 번 들어오는 경우가 있어 짧은 간격의 중복은 무시한다
     if (now - lastSubmit < 300) return;
+    // 금지어가 있으면 보내지 않고 알린다. 입력한 글은 남겨 두어 고쳐서 다시 보낼 수 있게 한다.
+    // 알림이 떠 있는 동안 밀려 있던 중복 제출이 알림을 또 띄우지 않도록, 알림이 닫힌 시각을 기록한다
+    if (hasBanned(input.value)) { alert('금지된 단어가 포함되어 있습니다.'); lastSubmit = performance.now(); return; }
     const msg = clean(input.value);
     // 도배 방지: 2초에 한 번만 보낸다 (너무 빠르면 입력한 글을 지우지 않고 남겨 둔다)
     if (msg && now - lastSent < 2000) return;
     lastSubmit = now;
-    if (msg) { dropMessage(msg); publish(msg); lastSent = now; }
+    if (msg) { dropMessage(msg); remember(msg, true); publish(msg); lastSent = now; }
     // 조합 직후 같은 틱에 비우면 크롬에서 마지막 글자가 되살아나는 경우가 있어 다음 틱에 비운다
-    setTimeout(() => { input.value = ''; }, 0);
+    setTimeout(() => { input.value = ''; setMax(); }, 0);
     if (coarse) input.blur();   // 폰은 키보드를 내려서 문구가 내려오는 게 보이게 한다
   }
   form.addEventListener('submit', ev => {
@@ -781,16 +841,7 @@
   const VIDEO = 'E8gmARGvPlI';
   const radio = document.getElementById('radio'), radioBody = radio.querySelector('.radio-body');
   const musicBtn = document.getElementById('music'), hintEl = radio.querySelector('.hint');
-  const RADIO_W = 288;   // CSS의 .radio.docked 폭과 같게 (넓은 화면 오른쪽 아래에 고정될 때)
   let musicOn = false, player = null, needsUnmute = false;
-  // 터미널 옆에 플레이어가 들어갈 공간이 있으면 오른쪽 아래에 고정, 없으면(폰·좁은 창) 터미널 아래에 붙인다
-  function placeRadio() {
-    if (!musicOn) return;
-    const termW = document.querySelector('.term').getBoundingClientRect().width;
-    const docked = (innerWidth - termW) / 2 >= RADIO_W + 32;
-    radio.classList.toggle('docked', docked);
-    document.body.classList.toggle('radio-below', !docked);
-  }
   function setBtn() {
     musicBtn.textContent = musicOn ? '♪ on' : '♪ music';
     musicBtn.setAttribute('aria-pressed', String(musicOn));
@@ -815,7 +866,7 @@
     radio.classList.add('open');
     radioBody.innerHTML = '<div id="yt"></div>';
     setBtn();
-    placeRadio();
+    fit();   // 창이 열렸으니 자리(옆에 고정/아래)와 글자 크기를 다시 정한다
     loadApi(() => {
       if (!musicOn || player) return;   // 스크립트 받는 사이에 꺼졌거나 이미 만들어진 경우
       player = new YT.Player('yt', {
@@ -847,6 +898,7 @@
     radio.classList.remove('open', 'docked');
     document.body.classList.remove('radio-below');
     setBtn();
+    fit();   // 음악 창이 사라진 만큼 트리를 다시 크게
   }
   musicBtn.addEventListener('click', () => (musicOn ? stopMusic() : startMusic()));
   radio.querySelector('.close').addEventListener('click', stopMusic);
@@ -860,7 +912,6 @@
   };
   addEventListener('click', wakeSound, true);
   addEventListener('keydown', wakeSound, true);
-  addEventListener('resize', placeRadio);
   startMusic();   // 기본값: 들어오자마자 재생 시도
 
   let last = performance.now();
