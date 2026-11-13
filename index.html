@@ -89,6 +89,8 @@
         .screen-wrap { position: relative; font-size: 16px; font-size: min(18px, calc((100vw - 72px) / 37), calc((100vh - 104px) / 45)); }
         #screen { position: relative; z-index: 1; display: block; padding: 14px 18px 18px; line-height: 1.2; white-space: pre; font-family: inherit; font-size: inherit; }
         @media (max-width: 599px) { #screen { padding: 10px 10px 14px; } }
+        /* 트리를 연달아 눌러도 폰이 화면을 확대하거나 회색으로 깜빡이지 않게 */
+        .js #screen { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         /* ---- JS 없이 보이는 정적 화면용: CSS 애니메이션과 CSS 눈 (JS가 돌면 매 프레임 다시 그리므로 쓰이지 않음) ---- */
         .snow { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; pointer-events: none; z-index: 0; }
@@ -948,6 +950,22 @@
         });
         // PC는 열자마자, 또는 창 아무 데나 클릭하면 바로 입력할 수 있게 한다 (폰은 프롬프트 줄을 눌러야 키보드가 뜬다)
         document.querySelector('.term').addEventListener('click', () => { if (!coarse) input.focus({ preventScroll: true }); });
+        // 트리(꼭대기 별 포함)를 누르면 0시 축하 효과를 다시 보여 준다. 테마는 날짜 그대로 둔다
+        // (크리스마스 전이면 평소 트리, 12/25부터는 화이트 크리스마스). 인트로 중·효과가 도는 중에는 무시한다
+        const TREE_HIT = new Set(tree.map(c => c.y * W + c.x)).add(STAR_Y * W + CX);
+        function onTree(ev) {
+            if (performance.now() - t0 < T.end) return false;
+            // 누른 위치 → 글자 칸 좌표 (화면 크기에 따라 글자 크기·여백이 바뀌므로 그때그때 잰다)
+            const r = screen.getBoundingClientRect(), cs = getComputedStyle(screen);
+            const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
+            const x = Math.floor((ev.clientX - r.left - pl) / ((r.width - pl - pr) / W));
+            const y = Math.floor((ev.clientY - r.top - pt) / ((r.height - pt - pb) / H));
+            // 손가락으로 누르면 한 칸 정도 빗나가기 쉬워 주변 1칸까지 트리로 본다
+            for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) if (TREE_HIT.has((y + dy) * W + (x + dx))) return true;
+            return false;
+        }
+        screen.addEventListener('click', ev => { const now = performance.now(); if (!booming(now) && onTree(ev)) startBoom(now); });
+        if (!coarse) screen.addEventListener('mousemove', ev => { screen.style.cursor = onTree(ev) ? 'pointer' : ''; });
         if (!coarse) input.focus({ preventScroll: true });
         listen();
         countVisit();
