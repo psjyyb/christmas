@@ -168,6 +168,15 @@
         /* text */
         .L0, .L1, .L2, .L3 { font-weight: 700; text-shadow: 0 0 .4em currentColor; }
         .L0 { color: #ff6b6b; } .L1 { color: #ffd43b; } .L2 { color: #69db7c; } .L3 { color: #f8f9fa; }
+        /* 크리스마스 0시 축하: 화면 전체가 한 번 하얗게 번쩍이고 터미널 창이 흔들린다 (JS가 boom 클래스를 잠깐 붙인다) */
+        .boom-flash { position: fixed; inset: 0; z-index: 50; pointer-events: none; background: #fff; opacity: 0; }
+        .boom .boom-flash { animation: boomflash 1.4s ease-out; }
+        @keyframes boomflash { 0% { opacity: .85; } 100% { opacity: 0; } }
+        .boom .term { animation: boomshake .7s ease-out; }
+        @keyframes boomshake {
+            0%, 100% { transform: translate(0, 0); } 15% { transform: translate(-8px, 4px); } 30% { transform: translate(7px, -5px); }
+            45% { transform: translate(-5px, 3px); } 60% { transform: translate(4px, -2px); } 80% { transform: translate(-2px, 1px); }
+        }
         .ny { color: #e9c46a; } .lab { color: #66759a; } .num { color: #ffd8a8; }
         .notice { color: #a5d8ff; }
         .msg { color: #ffffff; font-weight: 700; text-shadow: 0 0 6px rgba(255,255,255,.85), 0 0 14px rgba(165,216,255,.7); }
@@ -381,7 +390,28 @@
         let t0 = performance.now() - (reduce ? 1e7 : 0);
 
         // ---------- 눈
-        const flakeTarget = () => reduce ? 30 : white ? 140 : 100;
+        // ---------- 크리스마스 0시 축하: 페이지를 열어 둔 채 12/25 0시가 되면 섬광·흔들림·불꽃놀이·눈보라를 잠깐 보여 준다
+        let boomAt = -1e9, bursts = [];   // 축하 시작 시각(performance.now 기준), 불꽃 목록
+        const BOOM_SEC = 9;               // 축하 효과 길이(초)
+        const booming = nowMs => nowMs - boomAt < BOOM_SEC * 1000;
+        function startBoom(nowMs) {
+            if (reduce) return;   // 움직임 줄이기 설정이면 섬광·흔들림·불꽃 없이 테마만 바꾼다
+            boomAt = nowMs;
+            // 첫 불꽃은 꼭대기 별에서 크게, 나머지는 하늘 여기저기서 차례로 터진다
+            // 처음 2초는 여러 발이 한꺼번에(일제 사격), 그 뒤로는 하나둘씩 이어진다. 흰색은 눈과 섞여 안 보여서 빨강·금·초록만 쓴다
+            bursts = [{ x: CX, y: STAR_Y, at: 0, n: 32, sp: 15, cls: 'L1' }];
+            const shot = at => bursts.push({ x: 6 + rnd() * (W - 12), y: 2 + rnd() * (SKY_BOTTOM - 4), at,
+                n: 20 + Math.floor(rnd() * 10), sp: 8 + rnd() * 5, cls: pick(['L0', 'L1', 'L2']) });
+            for (let i = 0; i < 8; i++) shot(0.25 + rnd() * 1.8);
+            for (let i = 0; i < 16; i++) shot(2.2 + i * 0.4 + rnd() * 0.3);
+            if (!document.querySelector('.boom-flash')) {
+                const f = document.createElement('div'); f.className = 'boom-flash'; document.body.appendChild(f);
+            }
+            const root = document.documentElement;
+            root.classList.remove('boom'); void root.offsetWidth; root.classList.add('boom');   // 다시 붙여야 애니메이션이 새로 돈다
+            setTimeout(() => root.classList.remove('boom'), 1500);
+        }
+        const flakeTarget = () => reduce ? 30 : booming(performance.now()) ? 260 : white ? 140 : 100;
         const flakes = Array.from({ length: flakeTarget() }, () => spawn(rnd() * GROUND_Y));
         function spawn(y) {
             const r = rnd(), layer = r < 0.35 ? 0 : r < 0.7 ? 1 : 2;
@@ -454,12 +484,12 @@
                 if (f.y >= GROUND_Y) {
                     const x = Math.round(f.x);
                     if (x >= 3 && x < W - 3) pile[x] = Math.min(3.9, pile[x] + (white ? 0.6 : 0.45));
-                    flakes[i] = spawn(-rnd() * 3);
+                    // 목표 수보다 많으면(눈보라가 끝난 뒤) 바닥에 닿은 눈송이부터 없애서 한꺼번에 사라지지 않게 한다
+                    if (flakes.length > flakeTarget()) { flakes.splice(i, 1); i--; } else flakes[i] = spawn(-rnd() * 3);
                 }
             }
-            // 화이트 크리스마스로 바뀌면 눈송이를 목표 수까지 늘린다 (새 눈송이는 화면 위에서 시작)
+            // 화이트 크리스마스·눈보라 때는 눈송이를 목표 수까지 늘린다 (새 눈송이는 화면 위에서 시작)
             while (flakes.length < flakeTarget()) flakes.push(spawn(-rnd() * GROUND_Y * 0.5));
-            if (flakes.length > flakeTarget()) flakes.length = flakeTarget();
             // 쌓인 양에 비례해 녹여서 바닥이 통째로 덮이지 않고 울퉁불퉁하게 유지되게 한다 (화이트 때는 덜 녹아 더 두껍게)
             for (let x = 0; x < W; x++) pile[x] -= pile[x] * (white ? 0.02 : 0.03) * dt;
 
@@ -534,7 +564,8 @@
             const blink = Math.floor(nowMs / 530) % 2 === 0;
             const nd = nowDate();
             // 페이지를 열어 둔 채 12/25 0시가 되면 그 자리에서 화이트 크리스마스로 바뀐다
-            if (isWhite(nd) !== white) { white = !white; applyTheme(); }
+            if (isWhite(nd) !== white) { white = !white; applyTheme(); if (white) startBoom(nowMs); }
+            const party = booming(nowMs);   // 0시 축하 중 (전구 빠르게, 별빛 계속 켜짐, 불꽃놀이)
             clear();
 
             // 1) 프롬프트 + 명령어 타이핑
@@ -552,18 +583,18 @@
                 if (!vis(y)) return;
                 // 빛이 시계 방향으로 돌며 줄기를 하나씩 훑고 지나간다
                 const since = (((t * 4 - pos) % 6) + 6) % 6;
-                put(x, y, c, since < 1 ? 'ray' : since < 2.5 ? 'rayd' : 'rayx');
+                put(x, y, c, party || since < 1 ? 'ray' : since < 2.5 ? 'rayd' : 'rayx');
             });
             if (vis(STAR_Y)) {
                 const v = Math.sin(t * 2.6);
-                put(CX, STAR_Y, '★', 'star ' + (v > 0.5 ? 's3' : v > -0.3 ? 's2' : 's1'));
+                put(CX, STAR_Y, '★', 'star ' + (party || v > 0.5 ? 's3' : v > -0.3 ? 's2' : 's1'));
             }
 
             for (const c of tree) {
                 if (!vis(c.y)) continue;
                 switch (c.kind) {
                     case 'edge': put(c.x, c.y, c.ch, white ? 'fr' : c.cls); break;
-                    case 'bulb': put(c.x, c.y, 'o', (white ? BULB_W : BULB)[(c.k + Math.floor(t * 2.5)) % 4] + ' on'); break;
+                    case 'bulb': put(c.x, c.y, 'o', (white ? BULB_W : BULB)[(c.k + Math.floor(t * (party ? 12 : 2.5))) % 4] + ' on'); break;   // 축하 중엔 빠르게 깜빡
                     case 'garland': {
                         const lit = (((c.y - t * 6) % 6) + 6) % 6 < 1.5;
                         // 화이트 크리스마스: 금색 띠 대신 빨강·하양 사탕지팡이 줄무늬
@@ -639,11 +670,17 @@
                 const cd = countdown(nd);
                 if (!cd) {
                     const s = "* it's christmas today! *";
-                    text(centerX(s), CD_Y, s, white ? 'wh on' : 'num on');
+                    if (booming(nowMs)) {   // 축하 중에는 글자마다 색이 빠르게 돈다
+                        const x0 = centerX(s);
+                        for (let i = 0; i < s.length; i++) put(x0 + i, CD_Y, s[i], 'L' + ((i + Math.floor(t * 10)) % 4));
+                    } else text(centerX(s), CD_Y, s, white ? 'wh on' : 'num on');
                 } else {
                     const p2 = v => String(v).padStart(2, '0');
-                    const parts = [[cd.label, 'lab'], [String(cd.v[0]), 'num'], ['d ', 'lab'], [p2(cd.v[1]), 'num'], ['h ', 'lab'],
-                        [p2(cd.v[2]), 'num'], ['m ', 'lab'], [p2(cd.v[3]), 'num'], ['s', 'lab']];
+                    // 크리스마스 10초 전부터는 숫자가 매초 빨강·금색으로 번갈아 빛난다
+                    const fin = cd.label === 'christmas in ' && !cd.v[0] && !cd.v[1] && !cd.v[2] && cd.v[3] <= 10;
+                    const nk = fin ? (cd.v[3] % 2 ? 'L0' : 'L1') : 'num';
+                    const parts = [[cd.label, 'lab'], [String(cd.v[0]), nk], ['d ', 'lab'], [p2(cd.v[1]), nk], ['h ', 'lab'],
+                        [p2(cd.v[2]), nk], ['m ', 'lab'], [p2(cd.v[3]), nk], ['s', 'lab']];
                     let x = centerX(parts.map(p => p[0]).join(''));
                     for (const [s, k] of parts) x = text(x, CD_Y, s, k);
                 }
@@ -676,6 +713,27 @@
                 if (!isFree(s.x, s.y)) continue;
                 const v = Math.sin(t * s.sp + s.ph);
                 if (v > 0.7) put(s.x, s.y, '+', 'sk2'); else if (v > -0.3) put(s.x, s.y, '.', 'sk1');
+            }
+            // 0시 불꽃놀이: 터진 자리에서 사방으로 퍼지며 살짝 처지고 * → + → . 로 사그라든다 (빈 칸에만 그려 트리·글자 뒤로)
+            if (booming(nowMs)) {
+                const age = (nowMs - boomAt) / 1000;
+                for (const b of bursts) {
+                    const a = age - b.at;
+                    if (a < 0 || a > 1.4) continue;
+                    const r = b.sp * a * (1 - a * 0.3);
+                    // 바깥 고리와 안쪽 고리(0.55배) 두 겹으로 그려 꽉 찬 불꽃처럼 보이게 한다
+                    for (const ring of [1, 0.55]) {
+                        for (let i = 0; i < b.n; i++) {
+                            const ang = (i + ring) / b.n * 6.283;
+                            // 글자 칸은 세로가 가로의 약 2배라 가로로 2배 퍼뜨려야 둥글게 보인다
+                            const x = Math.round(b.x + Math.cos(ang) * r * ring * 2), y = Math.round(b.y + Math.sin(ang) * r * ring + 2 * a * a);
+                            if (y < 1 || y >= GROUND_Y || !isFree(x, y)) continue;
+                            put(x, y, a < 0.5 ? '*' : a < 0.95 ? '+' : '.', a < 0.95 ? b.cls : 'sk1');
+                        }
+                    }
+                    const bx = Math.round(b.x), by = Math.round(b.y);
+                    if (a < 0.15 && isFree(bx, by)) put(bx, by, '@', 'L3');
+                }
             }
             if (shoot) {
                 const hx = Math.round(shoot.x), hy = Math.round(shoot.y);
