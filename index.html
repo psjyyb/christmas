@@ -391,9 +391,11 @@
 
   // 프롬프트에 입력한 문구: 화면 위에서 흔들리며 내려오다 바닥에 닿으면 녹아서 쌓인 눈이 된다
   const drops = [];
+  const DROP_GAP = 2;     // 문구 사이 줄 간격 (2 = 문구 사이에 빈 줄 1줄 이상)
+  const DROP_VY = 2.3;    // 모든 문구가 같은 속도(줄/초)로 내려와 서로 따라잡지 않는다 → 1.2초 간격이면 약 2.8줄씩 벌어진다
   function dropMessage(msg) {
     const cols = colsOf(msg);
-    drops.push({ msg, cols, x: rnd() * (W - cols), y: 1, vy: 2 + rnd() * 0.6,
+    drops.push({ msg, cols, x: rnd() * (W - cols), y: 1, vy: DROP_VY,
                  amp: 0.8 + rnd() * 1.5, fr: 0.7 + rnd() * 0.6, ph: rnd() * 6.283 });
     // 1.2초 간격으로 내리면 한 문구가 바닥까지 가는 약 12초 동안 10개 정도가 화면에 있으므로 여유 있게 12개까지 둔다
     if (drops.length > 12) drops.shift();
@@ -425,6 +427,10 @@
         drops.splice(i, 1);
       }
     }
+    // 방명록 문구끼리는 항상 한 줄 이상 띄운다: 속도가 같아 한 번 벌어진 간격은 유지되지만, 내가 보낸 문구·새로 들어온
+    // 문구가 차례와 겹쳐 앞 문구 바로 위에 나오면 화면 위쪽 밖에서 기다렸다가 DROP_GAP 줄 간격을 두고 들어오게 한다
+    const order = drops.slice().sort((a, b) => b.y - a.y);   // 아래(먼저 내린) 문구부터
+    for (let i = 1; i < order.length; i++) order[i].y = Math.min(order[i].y, order[i - 1].y - DROP_GAP);
     for (let i = 0; i < flakes.length; i++) {
       const f = flakes[i];
       f.y += f.vy * dt;
@@ -635,8 +641,10 @@
 
     // 입력한 문구는 트리 앞으로 지나가게 그려서 읽을 수 있게 한다
     for (const d of drops) {
+      const y = Math.floor(d.y);
+      if (y < 1) continue;   // 간격을 맞추느라 화면 위에서 기다리는 중 (0번 줄은 맨 위 프롬프트라 그리지 않는다)
       const x = clamp(Math.round(d.x + Math.sin(t * d.fr + d.ph) * d.amp), 0, W - d.cols);
-      text(x, Math.floor(d.y), d.msg, 'msg');
+      text(x, y, d.msg, 'msg');
     }
 
     // 4) 밤하늘 장식과 눈은 빈 칸에만 그려서 트리·글자 뒤로 지나가게 한다
@@ -767,6 +775,22 @@
       fetch(DB + '/messages.json', { method: 'POST', body: JSON.stringify({ m: text, s: ME, t: { '.sv': 'timestamp' } }) }).catch(() => {});
     }
   }
+  // 조회수·방문자 수(stats): 페이지가 열릴 때마다 조회수 +1, 같은 브라우저는 하루 한 번만 방문자 +1 (날짜는 한국 시간).
+  // 서버가 +1 하므로 여러 명이 동시에 들어와도 숫자가 꼬이지 않고, 보안 규칙은 '+1'만 받는다.
+  // 파일로 열거나 내 PC(localhost)에서 테스트할 때는 세지 않는다
+  function countVisit() {
+    if (!window.fetch || location.protocol === 'file:' || /^(localhost|127\.|\[::1\]$)/.test(location.hostname)) return;
+    const day = new Date(Date.now() + 9 * 3600e3).toISOString().slice(0, 10);
+    const inc = { '.sv': { increment: 1 } };
+    const body = { 'views/total': inc, ['views/days/' + day]: inc };
+    let seenToday = false;
+    try { seenToday = localStorage.getItem('xmas-visit') === day; } catch (_) {}
+    if (!seenToday) { body['visitors/total'] = inc; body['visitors/days/' + day] = inc; }
+    // 여러 칸을 한 번에 올린다(PATCH). 방문 표시는 실제로 올라간 뒤에만 남겨, 실패한 방문이 오늘 방문자에서 빠지지 않게 한다
+    fetch(DB + '/stats.json', { method: 'PATCH', body: JSON.stringify(body) })
+      .then(r => { if (r.ok && !seenToday) { try { localStorage.setItem('xmas-visit', day); } catch (_) {} } })
+      .catch(() => {});
+  }
   function listen() {
     if (!window.EventSource) return;
     const seen = new Set();
@@ -830,6 +854,7 @@
   document.querySelector('.term').addEventListener('click', () => { if (!coarse) input.focus({ preventScroll: true }); });
   if (!coarse) input.focus({ preventScroll: true });
   listen();
+  countVisit();
 
   // 입력칸 밖에서 R 키를 누르면 처음부터 다시 재생
   addEventListener('keydown', ev => { if (ev.target !== input && (ev.key === 'r' || ev.key === 'R')) t0 = performance.now(); });
