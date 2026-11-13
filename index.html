@@ -413,7 +413,8 @@
         // 방명록(board): 최근 BACKLOG개를 오래된 것부터 1.2초 간격으로 하나씩 내리고, 끝까지 내린 뒤 화면의 문구가
         // 모두 바닥에 닿으면 처음부터 다시 내린다. 접속해 있는 동안 새로 들어온 문구(inbox)는 차례를 기다리지 않고 먼저 내린다
         const inbox = [], board = [];
-        let nextRelease = 0, boardAt = 0;
+        let nextRelease = 0, boardAt = 0, restartAt = 0;
+        const CYCLE_PAUSE = 10000;   // 한 바퀴를 다 내린 뒤 다음 바퀴까지 쉬는 시간(ms)
         function remember(msg, shownNow) {
             // 방금 내린 새 문구는 이번 바퀴 끝에서 곧바로 또 내려오지 않게, 이번 바퀴에서는 건너뛰고 다음 바퀴부터 돈다
             board.push({ msg, skip: shownNow });
@@ -424,7 +425,13 @@
             const nowP = performance.now();
             if (nowP >= nextRelease && nowP - t0 >= T.end) {
                 let msg = inbox.shift();
-                if (msg === undefined && board.length && boardAt >= board.length && !drops.length) boardAt = 0;   // 한 바퀴 끝 → 처음부터
+                // 한 바퀴 끝 → 화면의 방명록 문구가 모두 내려앉고 CYCLE_PAUSE 동안 쉰 뒤 처음부터.
+                // 쉬는 동안 새 문구가 내려오면 그 문구가 다 내려앉은 때부터 다시 센다
+                if (msg === undefined && board.length && boardAt >= board.length) {
+                    if (drops.length) restartAt = 0;
+                    else if (!restartAt) restartAt = nowP + CYCLE_PAUSE;
+                    else if (nowP >= restartAt) { boardAt = 0; restartAt = 0; }
+                }
                 while (msg === undefined && boardAt < board.length) { const b = board[boardAt++]; if (b.skip) b.skip = false; else msg = b.msg; }
                 if (msg !== undefined) { dropMessage(msg); nextRelease = nowP + 1200; }
             }
