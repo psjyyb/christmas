@@ -64,13 +64,19 @@
   .music:hover, .music:focus-visible { color: #ffe8a3; border-color: #8a7a4a; outline: none; }
   .radio { display: none; z-index: 3; background: #0b111e; border: 1px solid #222e47; border-radius: 12px; overflow: hidden;
            box-shadow: 0 20px 60px rgba(0,0,0,.6); }
-  .radio.open { display: block; position: relative; width: 100%; max-width: 420px; margin: 0 0 auto; }
+  /* 터미널 아래에 붙을 때는 유튜브가 허용하는 최소 크기(200×200)로 작게. 폰에서는 미니 플레이어처럼 오른쪽에 붙인다 */
+  /* 202px = 영상 200px + 좌우 테두리 1px씩 (border-box라 테두리가 폭에 포함된다) */
+  .radio.open { display: block; position: relative; width: 202px; margin: 0 0 auto; align-self: center; }
+  @media (max-width: 599px) { .radio.open:not(.docked) { align-self: flex-end; } }
   .radio.open.docked { position: fixed; right: 16px; bottom: 16px; width: 288px; margin: 0; }
+  .radio.muted .name { display: none; }   /* 좁은 창에서 '소리 켜기' 안내와 곡명이 겹치지 않게 */
   .radio-below .term { margin-bottom: 16px; }
   .radio-bar { height: 30px; display: flex; align-items: center; gap: 6px; padding: 0 6px 0 10px;
                background: #141c2d; border-bottom: 1px solid #1e293f; font-size: 11px; color: #8ea0c4; white-space: nowrap; }
   .radio-bar .dot { width: 9px; height: 9px; }
   .radio-bar .name { overflow: hidden; text-overflow: ellipsis; }
+  .radio-bar .hint { color: #ffe8a3; animation: hint-text 1.6s ease-in-out infinite; }
+  @keyframes hint-text { 50% { opacity: .45; } }
   .radio-bar .close { margin-left: auto; background: transparent; border: 0; color: #8ea0c4; font-size: 18px; line-height: 1;
                       padding: 2px 6px; cursor: pointer; }
   .radio-bar .close:hover, .radio-bar .close:focus-visible { color: #ff6b6b; outline: none; }
@@ -238,6 +244,7 @@
     <div class="radio-bar">
       <span class="dot" style="background:#ff5f57"></span><span class="dot" style="background:#febc2e"></span><span class="dot" style="background:#28c840"></span>
       <span class="name">♪ Wham! - Last Christmas</span>
+      <span class="hint" aria-live="polite"></span>
       <button class="close" type="button" aria-label="음악 끄기">×</button>
     </div>
     <div class="radio-body"></div>
@@ -383,7 +390,8 @@
     const cols = colsOf(msg);
     drops.push({ msg, cols, x: rnd() * (W - cols), y: 1, vy: 2 + rnd() * 0.6,
                  amp: 0.8 + rnd() * 1.5, fr: 0.7 + rnd() * 0.6, ph: rnd() * 6.283 });
-    if (drops.length > 8) drops.shift();
+    // 1.2초 간격으로 내리면 한 문구가 바닥까지 가는 약 12초 동안 10개 정도가 화면에 있으므로 여유 있게 12개까지 둔다
+    if (drops.length > 12) drops.shift();
   }
   // 다른 사람이 보낸 문구 대기열: 한꺼번에 몰려와도 1.2초 간격으로 하나씩 내린다
   const inbox = [];
@@ -678,9 +686,11 @@
   const clip = s => { let out = ''; for (const c of s) { if (colsOf(out + c) > MAX_IN) break; out += c; } return out; };
   let composing = false, pendingSubmit = false, lastSubmit = 0, lastSent = -1e9;
 
-  // ---------- 문구 공유: ntfy.sh 공개 채널로 주고받는다 (계정 없이 무료, 서버가 메시지를 12시간 보관)
-  // 채널 이름을 아는 사람은 누구나 보내고 볼 수 있으므로 추측하기 어려운 무작위 이름을 쓴다
-  const NTFY = 'https://ntfy.sh/xmastree-n8rype637eho2d';
+  // ---------- 문구 공유: Firebase Realtime Database(무료 Spark 요금제)에 쌓고 실시간으로 받는다.
+  // SDK 없이 REST 주소로 쓰기(POST)·실시간 받기(EventSource)를 한다. 보안 규칙이 '새 문구 추가'만 허용하고
+  // 수정·삭제·형식 위반은 막는다. 초기화는 Firebase 관리 화면에서 messages 항목을 지우면 된다
+  const DB = 'https://christmas-board-default-rtdb.asia-southeast1.firebasedatabase.app';
+  const BACKLOG = 30;                                    // 들어왔을 때 내려 줄 최근 문구 수
   const ME = Math.random().toString(36).slice(2, 10);   // 내가 보낸 문구가 되돌아왔을 때 두 번 내리지 않도록 구분하는 값
   const BAD = ['시발', '씨발', '씨바', '시바', '쓰발', 'ㅅㅂ', 'ㅆㅂ', '병신', 'ㅂㅅ', '개새끼', '개새', '새끼', '좆', '존나', '졸라',
                '지랄', 'ㅈㄹ', '닥쳐', '꺼져', '엿먹', '느금', '니미', '애미', '애비', 'fuck', 'shit', 'bitch', 'asshole', 'cunt'];
@@ -695,35 +705,40 @@
     return clip(s);
   }
   function publish(text) {
+    // 시간(t)은 서버 시각으로 채운다 — 규칙이 t == now 만 받으므로 시간을 조작한 글은 저장되지 않는다.
     // 문자열 본문은 단순 요청이라 CORS 사전 요청 없이 바로 보내진다. 실패해도 내 화면에는 이미 내려갔으니 조용히 넘긴다
-    if (window.fetch) fetch(NTFY, { method: 'POST', body: JSON.stringify({ m: text, s: ME }) }).catch(() => {});
+    if (window.fetch) {
+      fetch(DB + '/messages.json', { method: 'POST', body: JSON.stringify({ m: text, s: ME, t: { '.sv': 'timestamp' } }) }).catch(() => {});
+    }
   }
   function listen() {
     if (!window.EventSource) return;
-    const seen = new Set(), openedAt = Date.now();
-    let old = [], oldTimer = 0;
-    // since=12h: 처음 들어온 사람에게도 최근 문구를 보여주기 위해 서버에 남은 문구를 함께 받는다.
-    // 끊겼다 다시 붙으면 같은 문구가 또 오므로 id로 중복을 거른다
-    const es = new EventSource(NTFY + '/sse?since=12h');
-    es.onmessage = ev => {
-      let m;
-      try { m = JSON.parse(ev.data); } catch (_) { return; }
-      if (!m || m.event !== 'message' || seen.has(m.id)) return;
-      seen.add(m.id);
-      let text = m.message, from = '';
-      try { const o = JSON.parse(m.message); if (o && typeof o.m === 'string') { text = o.m; from = o.s; } } catch (_) { /* 페이지 밖에서 보낸 일반 글 */ }
-      if (from === ME) return;
-      text = clean(text);
+    const seen = new Set();
+    // 다른 사람이 쓴 임의의 데이터일 수 있으니 형식을 확인하고, 끊겼다 다시 붙을 때 같은 문구가 또 오므로 키로 중복을 거른다
+    const take = (key, v) => {
+      if (!v || typeof v.m !== 'string' || seen.has(key)) return;
+      seen.add(key);
+      if (v.s === ME) return;
+      const text = clean(v.m);
       if (!text) return;
-      if (m.time * 1000 < openedAt - 3000) {
-        // 접속 전에 쌓여 있던 문구는 마지막 5개만 내린다
-        old.push(text); if (old.length > 5) old.shift();
-        clearTimeout(oldTimer);
-        oldTimer = setTimeout(() => { inbox.push(...old); old = []; }, 500);
+      inbox.push(text);
+      if (inbox.length > BACKLOG + 10) inbox.shift();
+    };
+    // 처음 연결(재연결 포함) 때 최근 문구 묶음이 path '/'로 한 번에 오고, 이후엔 새 문구가 하나씩 온다.
+    // 푸시 키는 시간순이라 키 정렬 = 오래된 것부터
+    const onData = ev => {
+      let d;
+      try { d = JSON.parse(ev.data); } catch (_) { return; }
+      if (!d || typeof d.path !== 'string') return;
+      if (d.path === '/') {
+        if (d.data && typeof d.data === 'object') Object.keys(d.data).sort().forEach(k => take(k, d.data[k]));
       } else {
-        inbox.push(text); if (inbox.length > 20) inbox.shift();
+        take(d.path.slice(1).split('/')[0], d.data);
       }
     };
+    const es = new EventSource(`${DB}/messages.json?orderBy=${encodeURIComponent('"$key"')}&limitToLast=${BACKLOG}`);
+    es.addEventListener('put', onData);
+    es.addEventListener('patch', onData);
   }
   input.addEventListener('compositionstart', () => { composing = true; });
   input.addEventListener('compositionend', () => {
@@ -758,14 +773,15 @@
   // 입력칸 밖에서 R 키를 누르면 처음부터 다시 재생
   addEventListener('keydown', ev => { if (ev.target !== input && (ev.key === 'r' || ev.key === 'R')) t0 = performance.now(); });
 
-  // ---------- 배경음악: 공식 뮤직비디오(WhamVEVO, 퍼가기 허용)를 유튜브 플레이어로 재생한다.
+  // ---------- 배경음악: 공식 뮤직비디오(WhamVEVO, 퍼가기 허용)를 유튜브 IFrame API로 재생한다.
   // 음원 파일을 직접 넣는 건 저작권 침해라 유튜브 공식 영상을 쓴다.
-  // 브라우저는 사용자가 한 번 누르기 전엔 소리 나는 자동재생을 막으므로, 첫 클릭·탭·키 입력 때 플레이어를 띄운다
+  // 브라우저는 사용자 동작 전의 '소리 있는' 자동재생을 막는다. 그래서 들어오자마자 소리로 재생을 시도하고,
+  // 막히면 음소거로라도 재생을 시작해 두었다가 첫 클릭·탭·키 입력 때 이어서 소리를 켠다
   const VIDEO = 'E8gmARGvPlI';
   const radio = document.getElementById('radio'), radioBody = radio.querySelector('.radio-body');
-  const musicBtn = document.getElementById('music');
+  const musicBtn = document.getElementById('music'), hintEl = radio.querySelector('.hint');
   const RADIO_W = 288;
-  let musicOn = false, userStopped = false;
+  let musicOn = false, player = null, needsUnmute = false;
   // 터미널 옆에 플레이어가 들어갈 공간이 있으면 오른쪽 아래에 고정, 없으면(폰·좁은 창) 터미널 아래에 붙인다
   function placeRadio() {
     if (!musicOn) return;
@@ -778,40 +794,73 @@
     musicBtn.textContent = musicOn ? '♪ on' : '♪ music';
     musicBtn.setAttribute('aria-pressed', String(musicOn));
   }
+  const setHint = () => {
+    hintEl.textContent = needsUnmute ? 'tap anywhere for sound' : '';
+    radio.classList.toggle('muted', needsUnmute);
+  };
+  function loadApi(cb) {
+    if (window.YT && window.YT.Player) return cb();
+    const prev = window.onYouTubeIframeAPIReady;
+    window.onYouTubeIframeAPIReady = () => { if (prev) prev(); cb(); };
+    if (!document.getElementById('yt-api')) {
+      const s = document.createElement('script');
+      s.id = 'yt-api'; s.src = 'https://www.youtube.com/iframe_api';
+      document.head.appendChild(s);
+    }
+  }
   function startMusic() {
     if (musicOn) return;
     musicOn = true;
-    const f = document.createElement('iframe');
-    // loop=1은 playlist에 같은 영상을 넣어야 반복된다. playsinline: 아이폰에서 전체화면으로 튀지 않게
-    f.src = `https://www.youtube-nocookie.com/embed/${VIDEO}?autoplay=1&loop=1&playlist=${VIDEO}&rel=0&playsinline=1`;
-    f.title = 'Wham! - Last Christmas (Official Video)';
-    f.allow = 'autoplay; encrypted-media; picture-in-picture';
-    f.referrerPolicy = 'strict-origin-when-cross-origin';   // 유튜브는 퍼가는 사이트 주소(Referer)를 요구한다
-    radioBody.appendChild(f);
     radio.classList.add('open');
+    radioBody.innerHTML = '<div id="yt"></div>';
     setBtn();
     placeRadio();
+    loadApi(() => {
+      if (!musicOn || player) return;   // 스크립트 받는 사이에 꺼졌거나 이미 만들어진 경우
+      player = new YT.Player('yt', {
+        host: 'https://www.youtube-nocookie.com', videoId: VIDEO, width: '100%', height: '200',
+        // loop=1은 playlist에 같은 영상을 넣어야 반복된다. playsinline: 아이폰에서 전체화면으로 튀지 않게
+        playerVars: { autoplay: 1, loop: 1, playlist: VIDEO, rel: 0, playsinline: 1 },
+        events: {
+          onReady: e => {
+            e.target.playVideo();
+            // 1.5초 안에 재생이 시작되지 않았으면 소리 자동재생이 막힌 것 → 음소거로 재생하고 첫 동작 때 소리를 켠다
+            setTimeout(() => {
+              if (!player || !musicOn) return;
+              const st = player.getPlayerState();
+              if (st !== YT.PlayerState.PLAYING && st !== YT.PlayerState.BUFFERING) {
+                player.mute(); player.playVideo();
+                needsUnmute = true; setHint();
+              }
+            }, 1500);
+          },
+        },
+      });
+    });
   }
   function stopMusic() {
-    musicOn = false; userStopped = true;
-    radioBody.innerHTML = '';          // 플레이어를 없애야 소리가 완전히 멈춘다
+    musicOn = false; needsUnmute = false; setHint();
+    if (player && player.destroy) player.destroy();   // 플레이어를 없애야 소리가 완전히 멈춘다
+    player = null;
+    radioBody.innerHTML = '';
     radio.classList.remove('open', 'docked');
     document.body.classList.remove('radio-below');
     setBtn();
   }
   musicBtn.addEventListener('click', () => (musicOn ? stopMusic() : startMusic()));
   radio.querySelector('.close').addEventListener('click', stopMusic);
-  // 첫 상호작용 한 번만 자동으로 켠다. 터치는 pointerdown이 아니라 click(손을 뗀 뒤)이어야 브라우저가 '사용자 동작'으로 인정한다.
-  // 음악 버튼·플레이어 창 자체를 누른 경우는 그 버튼 동작에 맡긴다
-  const firstTouch = ev => {
-    if (ev.target && ev.target.closest && ev.target.closest('#music, #radio')) return;
-    removeEventListener('click', firstTouch, true);
-    removeEventListener('keydown', firstTouch, true);
-    if (!userStopped) startMusic();
+  // 음소거로 재생 중이면 첫 클릭·탭·키 입력 때 소리를 켠다 (곡은 끊기지 않고 이어진다).
+  // 터치는 pointerdown이 아니라 click(손을 뗀 뒤)이어야 브라우저가 '사용자 동작'으로 인정한다. 끄기 버튼들은 제외
+  const wakeSound = ev => {
+    if (ev.target && ev.target.closest && ev.target.closest('#music, #radio .close')) return;
+    if (!needsUnmute || !player || !player.unMute) return;
+    player.unMute(); player.setVolume(100); player.playVideo();
+    needsUnmute = false; setHint();
   };
-  addEventListener('click', firstTouch, true);
-  addEventListener('keydown', firstTouch, true);
+  addEventListener('click', wakeSound, true);
+  addEventListener('keydown', wakeSound, true);
   addEventListener('resize', placeRadio);
+  startMusic();   // 기본값: 들어오자마자 재생 시도
 
   let last = performance.now();
   function loop(nowMs) {
