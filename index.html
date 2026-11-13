@@ -121,11 +121,27 @@
   .rb  { color: #ffd43b; } .rbw { color: #f8f9fa; }
   .gd { color: #e4ecfb; } .gd2 { color: #8a9bbb; } .gd3 { color: #3f4c66; }
   /* snow */
-  .sn1 { color: #4f5c76; } .sn2 { color: #95a3be; } .sn3 { color: #f1f5ff; text-shadow: 0 0 4px rgba(255,255,255,.55); }
+  .sn1 { color: #7d8aa6; } .sn2 { color: #c3cde0; text-shadow: 0 0 3px rgba(255,255,255,.35); }
+  .sn3 { color: #ffffff; text-shadow: 0 0 4px rgba(255,255,255,.8), 0 0 9px rgba(190,215,255,.5); }
+  /* white christmas */
+  .wh { color: #f8f9fa; }
+  .white-xmas .bokeh span:nth-child(1) { --c: #ff4d5e !important; }
+  .white-xmas .bokeh span:nth-child(2) { --c: #f8f9fa !important; }
+  .white-xmas .bokeh span:nth-child(3) { --c: #ff8787 !important; }
+  .white-xmas .bokeh span:nth-child(4) { --c: #dee2e6 !important; }
   /* text */
   .L0, .L1, .L2, .L3 { font-weight: 700; text-shadow: 0 0 .4em currentColor; }
   .L0 { color: #ff6b6b; } .L1 { color: #ffd43b; } .L2 { color: #69db7c; } .L3 { color: #f8f9fa; }
   .ny { color: #e9c46a; } .lab { color: #66759a; } .num { color: #ffd8a8; }
+  .msg { color: #ffffff; font-weight: 700; text-shadow: 0 0 6px rgba(255,255,255,.85), 0 0 14px rgba(165,216,255,.7); }
+  /* 맨 아래 프롬프트 입력: 보이지 않는 입력칸을 프롬프트 줄 위에 겹쳐 두고 글자는 화면(그리드)에 그린다.
+     입력칸 글자가 16px보다 작으면 iOS가 포커스할 때 화면을 확대하므로 16px로 둔다. JS가 없으면 숨긴다 */
+  #say { display: none; }
+  .js #say { display: block; position: absolute; left: 0; right: 0; bottom: 0; height: 56px; z-index: 2; }
+  #cmd { display: block; width: 100%; height: 100%; font-size: 16px; border: 0; outline: 0; padding: 0; margin: 0;
+         background: transparent; color: transparent; caret-color: transparent; cursor: text;
+         -webkit-appearance: none; appearance: none; }
+  #cmd::selection { background: transparent; color: transparent; }
 
   @media (prefers-reduced-motion: reduce) { .bokeh span { animation: none; } }
 </style>
@@ -146,7 +162,7 @@
       <span class="title">박성준@north-pole: ~ — merry-christmas</span>
     </div>
     <div class="screen-wrap">
-      <div class="snow" aria-hidden="true"><i class="sn1" style="left:84.6%;animation-duration:17.8s,3.9s;animation-delay:-17.5s,-3.2s">.</i><i class="sn1" style="left:41.8%;animation-duration:20.6s,3.6s;animation-delay:-16.1s,-3.1s">.</i><i class="sn2" style="left:10.6%;animation-duration:11.6s,4.9s;animation-delay:-3.5s,-0.6s">·</i><i class="sn1" style="left:55.0%;animation-duration:18.6s,3.4s;animation-delay:-10.4s,-2.4s">.</i><i class="sn2" style="left:57.4%;animation-duration:14.8s,4.3s;animation-delay:-8.9s,-1.5s">·</i><i class="sn3" style="left:40.4%;animation-duration:8.8s,2.6s;animation-delay:-4.8s,-2.6s">*</i><i class="sn3" style="left:82.6%;animation-duration:6.5s,4.0s;animation-delay:-3.4s,-1.5s">*</i><i class="sn1" style="left:20.2%;animation-duration:16.3s,3.9s;animation-delay:-8.1s,-4.0s">.</i><i class="sn3" style="left:59.4%;animation-duration:6.0s,4.6s;animation-delay:-3.9s,-1.2s">*</i><i class="sn1" style="left:65.9%;animation-duration:19.5s,4.5s;animation-delay:-3.4s,-2.4s">.</i><i class="sn2" style="left:2.7%;animation-duration:11.1s,2.5s;animation-delay:-1.7s,-2.3s">·</i><i class="sn1" style="left:50.5%;animation-duration:18.0s,3.9s;animation-delay:-10.6s,-0.4s">.</i><i class="sn2" style="left:74.3%;animation-duration:14.2s,2.6s;animation-delay:-13.1s,-0.1s">·</i><i class="sn1" style="left:26.4%;animation-duration:18.6s,2.6s;animation-delay:-13.9s,-2.8s">.</i><i class="sn3" style="left:33.8%;animation-duration:7.7s,3.0s;animation-delay:-1.3s,-1.8s">*</i><i class="sn3" style="left:34.4%;animation-duration:7.4s,5.0s;animation-delay:-2.2s,-1.2s">*</i><i class="sn1" style="left:58.2%;animation-duration:17.6s,3.4s;animation-delay:-11.8s,-0.9s">.</i><i class="sn1" style="left:74.2%;animation-duration:22.6s,3.3s;animation-delay:-7.1s,-2.5s">.</i><i class="sn1" style="left:8.7%;animation-duration:18.0s,4.6s;animation-delay:-7.9s,-3.1s">.</i><i class="sn3" style="left:65.3%;animation-duration:8.6s,4.9s;animation-delay:-7.8s,-0.2s">*</i><i class="sn2" style="left:6.9%;animation-duration:13.5s,3.9s;animation-delay:-12.4s,-2.1s">·</i><i class="sn2" style="left:79.5%;animation-duration:14.4s,3.1s;animation-delay:-8.6s,-2.4s">·</i><i class="sn1" style="left:25.0%;animation-duration:16.6s,3.2s;animation-delay:-6.7s,-1.0s">.</i><i class="sn2" style="left:75.8%;animation-duration:10.8s,2.9s;animation-delay:-2.6s,-1.6s">·</i><i class="sn2" style="left:47.2%;animation-duration:14.0s,2.8s;animation-delay:-8.8s,-0.6s">·</i><i class="sn1" style="left:69.4%;animation-duration:21.3s,4.2s;animation-delay:-18.9s,-2.8s">.</i><i class="sn2" style="left:12.1%;animation-duration:11.3s,2.3s;animation-delay:-10.1s,-2.7s">·</i><i class="sn1" style="left:37.2%;animation-duration:16.5s,4.9s;animation-delay:-3.0s,-2.2s">.</i><i class="sn2" style="left:87.5%;animation-duration:13.6s,2.9s;animation-delay:-0.0s,-2.5s">·</i><i class="sn1" style="left:36.7%;animation-duration:21.6s,4.3s;animation-delay:-1.2s,-1.0s">.</i><i class="sn1" style="left:83.7%;animation-duration:21.8s,3.4s;animation-delay:-18.7s,-2.1s">.</i><i class="sn2" style="left:63.3%;animation-duration:11.8s,2.4s;animation-delay:-8.2s,-2.9s">·</i><i class="sn1" style="left:22.5%;animation-duration:17.1s,2.9s;animation-delay:-9.3s,-1.3s">.</i><i class="sn3" style="left:20.7%;animation-duration:8.1s,3.5s;animation-delay:-3.5s,-1.0s">*</i><i class="sn2" style="left:46.1%;animation-duration:11.2s,4.7s;animation-delay:-0.1s,-2.4s">·</i><i class="sn2" style="left:24.0%;animation-duration:13.0s,2.1s;animation-delay:-11.8s,-2.7s">·</i><i class="sn2" style="left:74.5%;animation-duration:10.7s,3.8s;animation-delay:-10.1s,-2.3s">·</i><i class="sn2" style="left:32.4%;animation-duration:12.5s,4.3s;animation-delay:-3.4s,-2.9s">·</i><i class="sn2" style="left:42.1%;animation-duration:10.0s,3.9s;animation-delay:-7.9s,-3.3s">·</i><i class="sn2" style="left:91.7%;animation-duration:13.4s,3.0s;animation-delay:-5.7s,-1.8s">·</i><i class="sn2" style="left:35.4%;animation-duration:11.9s,2.5s;animation-delay:-9.3s,-2.3s">·</i><i class="sn3" style="left:30.8%;animation-duration:7.7s,3.9s;animation-delay:-2.4s,-3.5s">*</i><i class="sn1" style="left:29.5%;animation-duration:19.8s,3.7s;animation-delay:-8.3s,-0.0s">.</i><i class="sn1" style="left:28.4%;animation-duration:20.0s,4.4s;animation-delay:-19.8s,-2.4s">.</i><i class="sn3" style="left:49.8%;animation-duration:7.7s,4.1s;animation-delay:-0.1s,-1.4s">*</i></div>
+      <div class="snow" aria-hidden="true"><i class="sn1" style="left:84.6%;animation-duration:16.5s,3.9s;animation-delay:-16.2s,-3.2s">·</i><i class="sn1" style="left:41.8%;animation-duration:18.9s,3.6s;animation-delay:-14.8s,-3.1s">·</i><i class="sn2" style="left:57.0%;animation-duration:13.6s,2.3s;animation-delay:-13.3s,-1.2s">•</i><i class="sn1" style="left:13.3%;animation-duration:16.7s,3.7s;animation-delay:-7.5s,-2.2s">·</i><i class="sn2" style="left:94.3%;animation-duration:11.6s,3.0s;animation-delay:-6.8s,-3.0s">•</i><i class="sn2" style="left:18.0%;animation-duration:13.5s,2.6s;animation-delay:-12.4s,-1.6s">•</i><i class="sn1" style="left:68.6%;animation-duration:18.3s,2.9s;animation-delay:-2.2s,-0.6s">·</i><i class="sn3" style="left:38.0%;animation-duration:7.1s,2.1s;animation-delay:-0.3s,-2.0s">*</i><i class="sn1" style="left:49.7%;animation-duration:18.9s,4.8s;animation-delay:-11.4s,-0.4s">·</i><i class="sn1" style="left:30.1%;animation-duration:18.6s,2.7s;animation-delay:-9.4s,-2.1s">·</i><i class="sn1" style="left:60.1%;animation-duration:19.0s,4.7s;animation-delay:-11.0s,-0.6s">·</i><i class="sn1" style="left:16.2%;animation-duration:18.4s,3.7s;animation-delay:-3.6s,-1.2s">·</i><i class="sn2" style="left:57.7%;animation-duration:12.0s,2.3s;animation-delay:-8.2s,-0.0s">•</i><i class="sn3" style="left:20.3%;animation-duration:8.3s,4.8s;animation-delay:-0.1s,-1.4s">*</i><i class="sn2" style="left:21.0%;animation-duration:10.3s,4.2s;animation-delay:-7.2s,-2.4s">•</i><i class="sn2" style="left:33.8%;animation-duration:13.4s,3.0s;animation-delay:-2.3s,-1.8s">•</i><i class="sn2" style="left:46.6%;animation-duration:10.2s,3.0s;animation-delay:-10.1s,-1.2s">•</i><i class="sn1" style="left:75.9%;animation-duration:17.2s,3.8s;animation-delay:-8.1s,-2.7s">·</i><i class="sn1" style="left:96.1%;animation-duration:15.9s,4.3s;animation-delay:-6.9s,-1.3s">·</i><i class="sn2" style="left:76.5%;animation-duration:11.2s,2.2s;animation-delay:-9.8s,-1.8s">•</i><i class="sn3" style="left:93.5%;animation-duration:6.3s,4.6s;animation-delay:-4.2s,-3.8s">*</i><i class="sn3" style="left:59.0%;animation-duration:6.2s,4.1s;animation-delay:-2.9s,-0.2s">*</i><i class="sn2" style="left:12.9%;animation-duration:12.1s,2.6s;animation-delay:-10.7s,-3.9s">•</i><i class="sn3" style="left:10.5%;animation-duration:7.8s,2.2s;animation-delay:-4.5s,-3.8s">*</i><i class="sn1" style="left:59.9%;animation-duration:17.3s,3.0s;animation-delay:-9.8s,-0.6s">·</i><i class="sn3" style="left:40.9%;animation-duration:6.7s,4.4s;animation-delay:-1.6s,-0.2s">*</i><i class="sn3" style="left:61.8%;animation-duration:6.8s,2.4s;animation-delay:-2.6s,-3.0s">*</i><i class="sn3" style="left:87.2%;animation-duration:8.2s,4.1s;animation-delay:-6.1s,-0.7s">*</i><i class="sn1" style="left:9.8%;animation-duration:16.6s,4.7s;animation-delay:-11.1s,-0.7s">·</i><i class="sn1" style="left:94.4%;animation-duration:19.4s,2.5s;animation-delay:-10.8s,-3.4s">·</i><i class="sn1" style="left:87.5%;animation-duration:19.1s,2.9s;animation-delay:-0.0s,-2.5s">·</i><i class="sn1" style="left:36.7%;animation-duration:19.8s,4.3s;animation-delay:-1.1s,-1.0s">·</i><i class="sn1" style="left:83.7%;animation-duration:19.9s,3.4s;animation-delay:-17.2s,-2.1s">·</i><i class="sn3" style="left:5.6%;animation-duration:7.1s,3.9s;animation-delay:-0.8s,-2.8s">*</i><i class="sn3" style="left:62.2%;animation-duration:6.3s,2.7s;animation-delay:-2.0s,-2.2s">*</i><i class="sn1" style="left:36.3%;animation-duration:19.8s,4.1s;animation-delay:-4.0s,-2.0s">·</i><i class="sn2" style="left:72.5%;animation-duration:13.5s,2.7s;animation-delay:-13.0s,-1.9s">•</i><i class="sn3" style="left:45.2%;animation-duration:8.7s,2.7s;animation-delay:-5.1s,-3.8s">*</i><i class="sn1" style="left:51.2%;animation-duration:15.1s,3.1s;animation-delay:-2.6s,-0.5s">·</i><i class="sn3" style="left:56.9%;animation-duration:8.8s,3.8s;animation-delay:-2.1s,-3.6s">*</i><i class="sn2" style="left:27.2%;animation-duration:11.3s,4.2s;animation-delay:-7.6s,-1.0s">•</i><i class="sn2" style="left:61.1%;animation-duration:12.5s,4.4s;animation-delay:-10.4s,-3.6s">•</i><i class="sn2" style="left:91.7%;animation-duration:12.7s,3.0s;animation-delay:-5.4s,-1.8s">•</i><i class="sn3" style="left:33.2%;animation-duration:7.1s,3.1s;animation-delay:-1.2s,-3.2s">*</i><i class="sn2" style="left:41.0%;animation-duration:12.7s,3.7s;animation-delay:-3.9s,-2.5s">•</i><i class="sn1" style="left:35.1%;animation-duration:20.3s,4.3s;animation-delay:-6.0s,-2.2s">·</i><i class="sn2" style="left:28.7%;animation-duration:10.1s,3.8s;animation-delay:-2.8s,-3.2s">•</i><i class="sn3" style="left:5.7%;animation-duration:7.9s,2.5s;animation-delay:-4.6s,-2.0s">*</i><i class="sn3" style="left:60.7%;animation-duration:7.5s,2.2s;animation-delay:-0.7s,-2.1s">*</i><i class="sn1" style="left:56.6%;animation-duration:18.2s,4.2s;animation-delay:-12.9s,-3.8s">·</i><i class="sn2" style="left:9.4%;animation-duration:12.2s,3.7s;animation-delay:-7.4s,-0.2s">•</i><i class="sn1" style="left:35.3%;animation-duration:20.8s,4.8s;animation-delay:-5.2s,-2.5s">·</i><i class="sn1" style="left:40.5%;animation-duration:18.3s,3.6s;animation-delay:-6.3s,-0.9s">·</i><i class="sn1" style="left:21.0%;animation-duration:18.4s,4.5s;animation-delay:-3.7s,-1.4s">·</i><i class="sn1" style="left:79.3%;animation-duration:19.6s,2.5s;animation-delay:-11.1s,-3.2s">·</i><i class="sn2" style="left:44.3%;animation-duration:11.3s,4.2s;animation-delay:-0.1s,-4.0s">•</i><i class="sn1" style="left:34.2%;animation-duration:15.9s,4.4s;animation-delay:-8.7s,-3.8s">·</i><i class="sn1" style="left:1.2%;animation-duration:18.3s,2.0s;animation-delay:-15.3s,-2.7s">·</i><i class="sn2" style="left:85.9%;animation-duration:13.0s,2.7s;animation-delay:-2.0s,-0.3s">•</i><i class="sn3" style="left:14.4%;animation-duration:8.9s,4.7s;animation-delay:-7.2s,-1.5s">*</i><i class="sn1" style="left:31.9%;animation-duration:20.2s,4.8s;animation-delay:-19.3s,-1.1s">·</i><i class="sn2" style="left:1.6%;animation-duration:13.2s,3.2s;animation-delay:-1.6s,-3.7s">•</i><i class="sn2" style="left:73.0%;animation-duration:12.1s,2.8s;animation-delay:-10.4s,-2.0s">•</i><i class="sn1" style="left:16.5%;animation-duration:15.9s,2.3s;animation-delay:-6.9s,-2.1s">·</i><i class="sn1" style="left:77.1%;animation-duration:19.6s,4.3s;animation-delay:-15.4s,-2.3s">·</i><i class="sn1" style="left:34.5%;animation-duration:19.0s,2.6s;animation-delay:-18.7s,-1.6s">·</i><i class="sn3" style="left:84.2%;animation-duration:8.9s,4.0s;animation-delay:-3.6s,-2.0s">*</i><i class="sn2" style="left:28.5%;animation-duration:13.9s,4.7s;animation-delay:-0.4s,-1.9s">•</i><i class="sn1" style="left:83.2%;animation-duration:20.0s,2.6s;animation-delay:-3.2s,-2.8s">·</i><i class="sn2" style="left:46.2%;animation-duration:10.5s,3.0s;animation-delay:-8.2s,-2.0s">•</i><i class="sn1" style="left:27.3%;animation-duration:20.2s,4.5s;animation-delay:-17.2s,-1.4s">·</i><i class="sn3" style="left:22.5%;animation-duration:8.0s,4.5s;animation-delay:-5.2s,-1.4s">*</i><i class="sn3" style="left:31.1%;animation-duration:6.9s,4.2s;animation-delay:-0.8s,-0.1s">*</i><i class="sn1" style="left:11.1%;animation-duration:20.3s,3.5s;animation-delay:-6.9s,-3.2s">·</i><i class="sn3" style="left:92.1%;animation-duration:8.9s,4.8s;animation-delay:-4.1s,-3.2s">*</i><i class="sn3" style="left:92.0%;animation-duration:6.1s,2.1s;animation-delay:-1.6s,-1.9s">*</i><i class="sn3" style="left:12.4%;animation-duration:8.2s,2.3s;animation-delay:-2.4s,-0.1s">*</i><i class="sn1" style="left:44.5%;animation-duration:17.7s,3.2s;animation-delay:-3.4s,-3.0s">·</i><i class="sn1" style="left:52.8%;animation-duration:18.6s,2.8s;animation-delay:-13.7s,-3.3s">·</i><i class="sn3" style="left:44.4%;animation-duration:7.6s,3.4s;animation-delay:-6.6s,-1.0s">*</i></div>
       <!-- 아래 내용은 JS가 꺼진 환경용 정적 화면. JS가 돌면 첫 프레임에서 통째로 교체된다 -->
       <pre id="screen" role="img" aria-label="반짝이는 크리스마스 트리 애니메이션"> <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ ./merry-christmas</span>                      
                            <span class="sp spk" style="animation-duration:2.8s;animation-delay:-4.4s">+</span> <span class="sp spk" style="animation-duration:2.9s;animation-delay:-1.4s">+</span>    <span class="sk1 tw3" style="animation-duration:4.1s;animation-delay:-5.7s">.</span>                          
@@ -185,6 +201,7 @@
                                                              
                                                              
  <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ </span><i class="w cur blink">█</i>                                      </pre>
+      <form id="say" autocomplete="off"><input id="cmd" type="text" maxlength="200" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="눈처럼 내릴 문구 입력"></form>
     </div>
   </div>
 
@@ -202,7 +219,20 @@
   // 한글 같은 전각 문자는 고정폭 화면에서 2칸을 차지하므로 따로 구분한다
   const WIDE = /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦]/;
 
-  const CMD = './merry-christmas';
+  // 주소 뒤에 ?date=2026-12-25 (또는 2026-12-24T23:59:50) 를 붙이면 그 시각부터 시계가 흐르는 것으로 미리 볼 수 있다.
+  // 형식이 잘못되면 무시하고 실제 현재 시각을 쓴다
+  const OFFSET = (() => {
+    const q = new URLSearchParams(location.search).get('date');
+    const d = q ? new Date(/^\d{4}-\d{2}-\d{2}$/.test(q) ? q + 'T00:00:00' : q) : null;
+    return d && !isNaN(d) ? d - Date.now() : 0;
+  })();
+  const nowDate = () => new Date(Date.now() + OFFSET);
+  // 12/25 00:00 ~ 12/31 23:59 는 화이트 크리스마스, 1/1부터는 다시 평소 트리 + 다음 크리스마스 카운트다운
+  const isWhite = d => d.getMonth() === 11 && d.getDate() >= 25;
+  let white = isWhite(nowDate());
+
+  // 두 명령어는 길이가 같아(17자) 등장 타이밍 계산이 그대로 맞는다
+  const CMD_NORMAL = './merry-christmas', CMD_WHITE = './white-christmas';
 
   // ---------- 트리 모델: 로드할 때마다 장식 배치가 달라지도록 한 번만 무작위 생성
   const TIERS = [[1, 4], [3, 7], [5, 10], [7, 13]];   // 단마다 [시작 반폭, 끝 반폭]
@@ -247,55 +277,59 @@
         if (hw > 1 && free && rnd() < 0.12) {
           orn.add(`${x},${y}`);
           tree.push({ x, y, kind: 'orn', ch: pick(['@', 'O', '@']),
-                      color: pick(['r', 'y', 'b', 'p', 'c', 'o']), ph: rnd() * 6.283, sp: 1.2 + rnd() * 2.8 });
+                      color: pick(['r', 'y', 'b', 'p', 'c', 'o']), wcolor: pick(['r', 'r', 'wh', 'wh', 'y']),
+                      ph: rnd() * 6.283, sp: 1.2 + rnd() * 2.8 });
           continue;
         }
-        tree.push({ x, y, kind: 'leaf', ch: rnd() < 0.14 ? '^' : '*', cls: pick(['g1', 'g1', 'g2', 'g3']), ph: rnd() * 1000 });
+        // snow·ed: 화이트 크리스마스 때 이 잎을 눈 덮인 흰색으로 칠할지 정하는 값 (ed = 테두리까지 거리)
+        tree.push({ x, y, kind: 'leaf', ch: rnd() < 0.14 ? '^' : '*', cls: pick(['g1', 'g1', 'g2', 'g3']), ph: rnd() * 1000,
+                    snow: rnd(), ed: hw - ad });
       }
     }
   }
-  const TITLE = 'M E R R Y   C H R I S T M A S';
+  const TITLE = 'M E R R Y   C H R I S T M A S', TITLE_W = 'W H I T E   C H R I S T M A S';   // 같은 길이
   const TITLE_Y = GROUND_Y + 2;
   const NY_Y = TITLE_Y + 1;
   const CD_Y = NY_Y + 2;
   const END_Y = CD_Y + 2;
   const H = END_Y + 1;
 
+  // wbox·wrb: 화이트 크리스마스 때의 상자·리본 색 (빨강·하양 교차)
   const GIFTS = [
-    { x: CX - 17, w: 5, box: 'bx2', rb: 'rbw' },
-    { x: CX - 11, w: 7, box: 'bx1', rb: 'rb' },
-    { x: CX + 5,  w: 5, box: 'bx3', rb: 'rb' },
-    { x: CX + 11, w: 7, box: 'bx4', rb: 'rbw' },
+    { x: CX - 17, w: 5, box: 'bx2', rb: 'rbw', wbox: 'wh',  wrb: 'r' },
+    { x: CX - 11, w: 7, box: 'bx1', rb: 'rb',  wbox: 'bx1', wrb: 'rbw' },
+    { x: CX + 5,  w: 5, box: 'bx3', rb: 'rb',  wbox: 'wh',  wrb: 'r' },
+    { x: CX + 11, w: 7, box: 'bx4', rb: 'rbw', wbox: 'bx1', wrb: 'rbw' },
   ];
   // 별빛 줄기: [x, y, 문자, 시계 위치 0~5] — 아래쪽(3)은 트리에 가려 비워 둔다
   const RAYS = [[CX, RAY_Y, '|', 0], [CX + 2, RAY_Y, '/', 1], [CX + 2, STAR_Y, '-', 2], [CX + 3, STAR_Y, '-', 2],
                 [CX - 3, STAR_Y, '-', 4], [CX - 2, STAR_Y, '-', 4], [CX - 2, RAY_Y, '\\', 5]];
-  const BULB = ['r', 'y', 'b', 'p'];
+  const BULB = ['r', 'y', 'b', 'p'], BULB_W = ['r', 'wh', 'r', 'wh'];
   const PILE = ['', '▁', '▂', '▃'];
 
-  const now0 = new Date();
-  // 1월이면 막 시작된 해, 그 외에는 다가올 해를 축하한다
-  const NY = `~ and a happy new year ${now0.getFullYear() + (now0.getMonth() >= 1 ? 1 : 0)} ~`;
+  // 1월이면 막 시작된 해, 그 외에는 다가올 해를 축하한다 (연도는 항상 4자리라 길이 고정)
+  const nyText = d => `~ and a happy new year ${d.getFullYear() + (d.getMonth() >= 1 ? 1 : 0)} ~`;
 
   // ---------- 등장 타임라인(ms)
   const T = {};
   T.type = 350;  T.typeStep = 55;
-  T.tree = T.type + CMD.length * T.typeStep + 350;  T.rowStep = 45;
+  T.tree = T.type + CMD_NORMAL.length * T.typeStep + 350;  T.rowStep = 45;
   T.title = T.tree + (GROUND_Y - RAY_Y + 1) * T.rowStep + 250;  T.letterStep = 40;
   T.ny = T.title + TITLE.length * T.letterStep + 200;  T.nyStep = 30;
-  T.cd = T.ny + NY.length * T.nyStep + 250;
+  T.cd = T.ny + nyText(nowDate()).length * T.nyStep + 250;
   T.end = T.cd + 350;
   let t0 = performance.now() - (reduce ? 1e7 : 0);
 
   // ---------- 눈
-  const flakes = Array.from({ length: reduce ? 18 : 55 }, () => spawn(rnd() * GROUND_Y));
+  const flakeTarget = () => reduce ? 30 : white ? 140 : 100;
+  const flakes = Array.from({ length: flakeTarget() }, () => spawn(rnd() * GROUND_Y));
   function spawn(y) {
-    const layer = rnd() < 0.45 ? 0 : rnd() < 0.6 ? 1 : 2;
+    const r = rnd(), layer = r < 0.35 ? 0 : r < 0.7 ? 1 : 2;
     return { x: rnd() * W, y, layer,
-             vy: [1.1, 2.0, 3.2][layer] + rnd() * 0.8,
+             vy: [1.2, 2.1, 3.3][layer] + rnd() * 0.8,
              amp: 0.4 + rnd() * 1.2, fr: 0.4 + rnd() * 0.9, ph: rnd() * 6.283 };
   }
-  const FLAKE = [['.', 'sn1'], ['·', 'sn2'], ['*', 'sn3']];
+  const FLAKE = [['·', 'sn1'], ['•', 'sn2'], ['*', 'sn3']];
 
   // ---------- 밤하늘(깜빡이는 별·별똥별), 꼭대기 별 주변 반짝이, 바닥에 쌓이는 눈
   const SKY_BOTTOM = 14;
@@ -305,18 +339,39 @@
   let shoot = null, nextShoot = 3 + rnd() * 4;
   const pile = new Array(W).fill(0);
 
+  // 프롬프트에 입력한 문구: 화면 위에서 흔들리며 내려오다 바닥에 닿으면 녹아서 쌓인 눈이 된다
+  const drops = [];
+  function dropMessage(msg) {
+    const cols = colsOf(msg);
+    drops.push({ msg, cols, x: rnd() * (W - cols), y: 1, vy: 2 + rnd() * 0.6,
+                 amp: 0.8 + rnd() * 1.5, fr: 0.7 + rnd() * 0.6, ph: rnd() * 6.283 });
+    if (drops.length > 8) drops.shift();
+  }
+
   function update(dt) {
+    for (let i = drops.length - 1; i >= 0; i--) {
+      const d = drops[i];
+      d.y += d.vy * dt;
+      if (d.y >= GROUND_Y - 1) {
+        const x0 = clamp(Math.round(d.x), 0, W - d.cols);
+        for (let x = Math.max(3, x0); x < Math.min(W - 3, x0 + d.cols); x++) pile[x] = Math.min(3.9, pile[x] + 1.2);
+        drops.splice(i, 1);
+      }
+    }
     for (let i = 0; i < flakes.length; i++) {
       const f = flakes[i];
       f.y += f.vy * dt;
       if (f.y >= GROUND_Y) {
         const x = Math.round(f.x);
-        if (x >= 3 && x < W - 3) pile[x] = Math.min(3.9, pile[x] + 0.8);
+        if (x >= 3 && x < W - 3) pile[x] = Math.min(3.9, pile[x] + (white ? 0.6 : 0.45));
         flakes[i] = spawn(-rnd() * 3);
       }
     }
-    // 쌓인 양에 비례해 녹여서 바닥이 통째로 덮이지 않고 울퉁불퉁하게 유지되게 한다
-    for (let x = 0; x < W; x++) pile[x] -= pile[x] * 0.03 * dt;
+    // 화이트 크리스마스로 바뀌면 눈송이를 목표 수까지 늘린다 (새 눈송이는 화면 위에서 시작)
+    while (flakes.length < flakeTarget()) flakes.push(spawn(-rnd() * GROUND_Y * 0.5));
+    if (flakes.length > flakeTarget()) flakes.length = flakeTarget();
+    // 쌓인 양에 비례해 녹여서 바닥이 통째로 덮이지 않고 울퉁불퉁하게 유지되게 한다 (화이트 때는 덜 녹아 더 두껍게)
+    for (let x = 0; x < W; x++) pile[x] -= pile[x] * (white ? 0.02 : 0.03) * dt;
 
     for (let i = sparks.length - 1; i >= 0; i--) if ((sparks[i].life -= dt) <= 0) sparks.splice(i, 1);
     if (rnd() < dt * 5) sparks.push({ x: CX + Math.round((rnd() - 0.5) * 12), y: 1 + Math.floor(rnd() * 3), life: 0.3 + rnd() * 0.3 });
@@ -334,11 +389,14 @@
   const cls = Array.from({ length: H }, () => new Array(W));
   const clear = () => { for (let y = 0; y < H; y++) { chs[y].fill(' '); cls[y].fill(''); } };
   const put = (x, y, c, k) => { if (x >= 0 && x < W && y >= 0 && y < H) { chs[y][x] = c; cls[y][x] = k || ''; } };
+  // 입력 문구에 들어올 수 있는 이모지(U+1F300~)도 화면에서 2칸을 차지한다
+  const isWide = c => WIDE.test(c) || c.codePointAt(0) >= 0x1F300;
+  const colsOf = s => { let n = 0; for (const c of s) n += isWide(c) ? 2 : 1; return n; };
   // 전각 문자(한글)는 2칸: 첫 칸에 글자, 둘째 칸은 빈 문자열('')로 자리만 잡는다
   const text = (x, y, s, k) => {
     for (const c of s) {
       put(x, y, c, k);
-      if (WIDE.test(c)) put(++x, y, '', k);
+      if (isWide(c)) put(++x, y, '', k);
       x++;
     }
     return x;
@@ -353,25 +411,37 @@
     return text(x, y, '$ ', 'cmd');
   }
 
+  // 아래 줄 카운트다운: 크리스마스 전엔 크리스마스까지, 12/26~31엔 새해까지.
+  // 목표 시각을 항상 미래로 잡고 0에서 멈추므로 음수가 나오지 않는다
   function countdown(now) {
-    const yr = now.getFullYear();
-    const start = new Date(yr, 11, 25), end = new Date(yr, 11, 26);
-    if (now >= start && now < end) return null;
-    const target = now >= end ? new Date(yr + 1, 11, 25) : start;
-    let s = Math.floor((target - now) / 1000);
+    const yr = now.getFullYear(), mo = now.getMonth(), day = now.getDate();
+    if (mo === 11 && day === 25) return null;                       // 크리스마스 당일
+    const toNewYear = mo === 11 && day > 25;
+    const target = toNewYear ? new Date(yr + 1, 0, 1) : new Date(yr, 11, 25);
+    let s = Math.max(0, Math.floor((target - now) / 1000));
     const d = Math.floor(s / 86400); s -= d * 86400;
     const h = Math.floor(s / 3600);  s -= h * 3600;
     const m = Math.floor(s / 60);    s -= m * 60;
-    return [d, h, m, s];
+    return { label: toNewYear ? 'new year in ' : 'christmas in ', v: [d, h, m, s] };
+  }
+
+  const titleBar = document.querySelector('.title');
+  function applyTheme() {
+    document.documentElement.classList.toggle('white-xmas', white);
+    titleBar.textContent = `${USER}@north-pole: ~ — ${white ? 'white' : 'merry'}-christmas`;
   }
 
   function render(nowMs) {
     const e = nowMs - t0, t = nowMs / 1000;
     const blink = Math.floor(nowMs / 530) % 2 === 0;
+    const nd = nowDate();
+    // 페이지를 열어 둔 채 12/25 0시가 되면 그 자리에서 화이트 크리스마스로 바뀐다
+    if (isWhite(nd) !== white) { white = !white; applyTheme(); }
     clear();
 
     // 1) 프롬프트 + 명령어 타이핑
     const px = drawPrompt(0);
+    const CMD = white ? CMD_WHITE : CMD_NORMAL;
     const typed = clamp(Math.floor((e - T.type) / T.typeStep), 0, CMD.length);
     text(px, 0, CMD.slice(0, typed), 'cmd');
     if (e < T.tree && blink) put(px + typed, 0, '█', 'cur');
@@ -394,20 +464,23 @@
     for (const c of tree) {
       if (!vis(c.y)) continue;
       switch (c.kind) {
-        case 'edge': put(c.x, c.y, c.ch, c.cls); break;
-        case 'bulb': put(c.x, c.y, 'o', BULB[(c.k + Math.floor(t * 2.5)) % 4] + ' on'); break;
+        case 'edge': put(c.x, c.y, c.ch, white ? 'fr' : c.cls); break;
+        case 'bulb': put(c.x, c.y, 'o', (white ? BULB_W : BULB)[(c.k + Math.floor(t * 2.5)) % 4] + ' on'); break;
         case 'garland': {
           const lit = (((c.y - t * 6) % 6) + 6) % 6 < 1.5;
-          put(c.x, c.y, '~', lit ? 't2' : 't');
+          // 화이트 크리스마스: 금색 띠 대신 빨강·하양 사탕지팡이 줄무늬
+          put(c.x, c.y, '~', white ? (lit ? 'wh on' : ((c.x + c.y) & 1 ? 'r' : 'wh')) : (lit ? 't2' : 't'));
           break;
         }
         case 'orn': {
           const v = Math.sin(t * c.sp + c.ph);
-          put(c.x, c.y, c.ch, c.color + (v > 0.55 ? ' on' : v < -0.45 ? ' x' : ''));
+          put(c.x, c.y, c.ch, (white ? c.wcolor : c.color) + (v > 0.55 ? ' on' : v < -0.45 ? ' x' : ''));
           break;
         }
         default:
           if (Math.sin(t * 1.3 + c.ph) > 0.995) put(c.x, c.y, '*', 'sp');
+          // 화이트 크리스마스: 테두리 가까운 잎일수록 눈이 덮인 것처럼 하얗게
+          else if (white && c.snow !== undefined && c.snow < (c.ed <= 2 ? 0.7 : 0.25)) put(c.x, c.y, '*', 'fr2');
           else put(c.x, c.y, c.ch, c.cls);
       }
     }
@@ -422,13 +495,14 @@
       const n = (g.w - 3) >> 1;
       const big = g.w >= 7;
       const bowY = big ? BASE_Y : BASE_Y + 1;
-      if (vis(bowY)) text(mid - 1, bowY, '>o<', g.rb);
+      const box = white ? g.wbox : g.box, rb = white ? g.wrb : g.rb;
+      if (vis(bowY)) text(mid - 1, bowY, '>o<', rb);
       if (big && vis(BASE_Y + 1)) {
-        text(g.x, BASE_Y + 1, '[' + '='.repeat(n), g.box); put(mid, BASE_Y + 1, '|', g.rb); text(mid + 1, BASE_Y + 1, '='.repeat(n) + ']', g.box);
+        text(g.x, BASE_Y + 1, '[' + '='.repeat(n), box); put(mid, BASE_Y + 1, '|', rb); text(mid + 1, BASE_Y + 1, '='.repeat(n) + ']', box);
       }
       if (vis(BASE_Y + 2)) {
         const fill = big ? '_' : '=';
-        text(g.x, BASE_Y + 2, '[' + fill.repeat(n), g.box); put(mid, BASE_Y + 2, '|', g.rb); text(mid + 1, BASE_Y + 2, fill.repeat(n) + ']', g.box);
+        text(g.x, BASE_Y + 2, '[' + fill.repeat(n), box); put(mid, BASE_Y + 2, '|', rb); text(mid + 1, BASE_Y + 2, fill.repeat(n) + ']', box);
       }
     }
     if (vis(GROUND_Y)) {
@@ -444,38 +518,49 @@
 
     // 3) 문구
     if (e >= T.title) {
-      const n = clamp(Math.floor((e - T.title) / T.letterStep), 0, TITLE.length);
-      const x0 = centerX(TITLE);
+      const title = white ? TITLE_W : TITLE;
+      const n = clamp(Math.floor((e - T.title) / T.letterStep), 0, title.length);
+      const x0 = centerX(title);
       for (let i = 0; i < n; i++) {
-        if (TITLE[i] === ' ') continue;
-        put(x0 + i, TITLE_Y, TITLE[i], 'L' + ((i + Math.floor(t * 4)) % 4));
+        if (title[i] === ' ') continue;
+        const k = (i + Math.floor(t * 4)) % 4;
+        put(x0 + i, TITLE_Y, title[i], white ? (k & 1 ? 'L0' : 'L3') : 'L' + k);   // 화이트: 빨강·하양 교차
       }
-      if (n === TITLE.length) {
-        const a = Math.sin(t * 3) > 0;
-        put(x0 - 3, TITLE_Y, '*', a ? 'y on' : 'y x');
-        put(x0 + TITLE.length + 2, TITLE_Y, '*', a ? 'y x' : 'y on');
+      if (n === title.length) {
+        const a = Math.sin(t * 3) > 0, sc = white ? 'r' : 'y';
+        put(x0 - 3, TITLE_Y, '*', sc + (a ? ' on' : ' x'));
+        put(x0 + title.length + 2, TITLE_Y, '*', sc + (a ? ' x' : ' on'));
       }
     }
     if (e >= T.ny) {
-      const n = clamp(Math.floor((e - T.ny) / T.nyStep), 0, NY.length);
-      text(centerX(NY), NY_Y, NY.slice(0, n), 'ny');
+      const ny = nyText(nd);
+      const n = clamp(Math.floor((e - T.ny) / T.nyStep), 0, ny.length);
+      text(centerX(ny), NY_Y, ny.slice(0, n), 'ny');
     }
     if (e >= T.cd) {
-      const cd = countdown(new Date());
+      const cd = countdown(nd);
       if (!cd) {
         const s = "* it's christmas today! *";
-        text(centerX(s), CD_Y, s, 'num on');
+        text(centerX(s), CD_Y, s, white ? 'wh on' : 'num on');
       } else {
         const p2 = v => String(v).padStart(2, '0');
-        const parts = [['christmas in ', 'lab'], [String(cd[0]), 'num'], ['d ', 'lab'], [p2(cd[1]), 'num'], ['h ', 'lab'],
-                       [p2(cd[2]), 'num'], ['m ', 'lab'], [p2(cd[3]), 'num'], ['s', 'lab']];
+        const parts = [[cd.label, 'lab'], [String(cd.v[0]), 'num'], ['d ', 'lab'], [p2(cd.v[1]), 'num'], ['h ', 'lab'],
+                       [p2(cd.v[2]), 'num'], ['m ', 'lab'], [p2(cd.v[3]), 'num'], ['s', 'lab']];
         let x = centerX(parts.map(p => p[0]).join(''));
         for (const [s, k] of parts) x = text(x, CD_Y, s, k);
       }
     }
     if (e >= T.end) {
-      const x = drawPrompt(END_Y);
+      let x = drawPrompt(END_Y);
+      x = text(x, END_Y, input.value, 'cmd');
       if (blink) put(x, END_Y, '█', 'cur');
+      if (!input.value) text(x + 2, END_Y, coarse ? 'tap here to type a message' : 'type a message & press enter', 'lab');
+    }
+
+    // 입력한 문구는 트리 앞으로 지나가게 그려서 읽을 수 있게 한다
+    for (const d of drops) {
+      const x = clamp(Math.round(d.x + Math.sin(t * d.fr + d.ph) * d.amp), 0, W - d.cols);
+      text(x, Math.floor(d.y), d.msg, 'msg');
     }
 
     // 4) 밤하늘 장식과 눈은 빈 칸에만 그려서 트리·글자 뒤로 지나가게 한다
@@ -515,7 +600,7 @@
       for (let x = 0; x < W; x++) {
         const c = chs[y][x], k = cls[y][x];
         if (c === '') continue;   // 전각 문자의 둘째 칸
-        if (c.charCodeAt(0) > 127) { flush(); rk = null; line += `<i class="${WIDE.test(c) ? 'w2' : 'w'} ${k}">${c}</i>`; continue; }
+        if (c.charCodeAt(0) > 127) { flush(); rk = null; line += `<i class="${isWide(c) ? 'w2' : 'w'} ${k}">${c}</i>`; continue; }
         if (k !== rk) { flush(); rk = k; }
         run += ESC[c] || c;
       }
@@ -543,8 +628,40 @@
   addEventListener('resize', fit);
   fit();
 
-  // R 키로 처음부터 다시 재생
-  addEventListener('keydown', ev => { if (ev.key === 'r' || ev.key === 'R') t0 = performance.now(); });
+  // ---------- 맨 아래 프롬프트에 직접 입력 → Enter 치면 그 문구가 눈처럼 내려온다
+  const form = document.getElementById('say'), input = document.getElementById('cmd');
+  const coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;   // 터치 기기(폰·태블릿)
+  const MAX_IN = W - colsOf(` ${USER}@north-pole:~$ `) - 1;                      // 커서 1칸을 남긴 입력 가능 폭
+  const clip = s => { let out = ''; for (const c of s) { if (colsOf(out + c) > MAX_IN) break; out += c; } return out; };
+  let composing = false, pendingSubmit = false, lastSubmit = 0;
+  input.addEventListener('compositionstart', () => { composing = true; });
+  input.addEventListener('compositionend', () => {
+    composing = false;
+    input.value = clip(input.value);
+    if (pendingSubmit) { pendingSubmit = false; submit(); }
+  });
+  // 한글 조합 중에 잘라내면 조합이 깨지므로 조합이 끝난 뒤에만 폭을 맞춘다
+  input.addEventListener('input', () => { if (!composing) { const v = clip(input.value); if (v !== input.value) input.value = v; } });
+  function submit() {
+    // 한글 입력기에 따라 Enter 한 번에 제출이 두 번 들어오는 경우가 있어 짧은 간격의 중복은 무시한다
+    if (performance.now() - lastSubmit < 300) return;
+    lastSubmit = performance.now();
+    const msg = clip(input.value.trim());
+    if (msg) dropMessage(msg);
+    // 조합 직후 같은 틱에 비우면 크롬에서 마지막 글자가 되살아나는 경우가 있어 다음 틱에 비운다
+    setTimeout(() => { input.value = ''; }, 0);
+    if (coarse) input.blur();   // 폰은 키보드를 내려서 문구가 내려오는 게 보이게 한다
+  }
+  form.addEventListener('submit', ev => {
+    ev.preventDefault();
+    if (composing) pendingSubmit = true; else submit();
+  });
+  // PC는 열자마자, 또는 창 아무 데나 클릭하면 바로 입력할 수 있게 한다 (폰은 프롬프트 줄을 눌러야 키보드가 뜬다)
+  document.querySelector('.term').addEventListener('click', () => { if (!coarse) input.focus({ preventScroll: true }); });
+  if (!coarse) input.focus({ preventScroll: true });
+
+  // 입력칸 밖에서 R 키를 누르면 처음부터 다시 재생
+  addEventListener('keydown', ev => { if (ev.target !== input && (ev.key === 'r' || ev.key === 'R')) t0 = performance.now(); });
 
   let last = performance.now();
   function loop(nowMs) {
@@ -554,6 +671,7 @@
     last = nowMs;
     render(nowMs);
   }
+  applyTheme();
   render(last);
   // 첫 프레임이 성공한 뒤에만 CSS 눈을 끈다 — 중간에 JS가 실패하면 정적 화면이 그대로 남도록
   document.documentElement.classList.add('js');
