@@ -169,6 +169,7 @@
         .L0, .L1, .L2, .L3 { font-weight: 700; text-shadow: 0 0 .4em currentColor; }
         .L0 { color: #ff6b6b; } .L1 { color: #ffd43b; } .L2 { color: #69db7c; } .L3 { color: #f8f9fa; }
         .ny { color: #e9c46a; } .lab { color: #66759a; } .num { color: #ffd8a8; }
+        .notice { color: #a5d8ff; }
         .msg { color: #ffffff; font-weight: 700; text-shadow: 0 0 6px rgba(255,255,255,.85), 0 0 14px rgba(165,216,255,.7); }
         /* 맨 아래 프롬프트 입력: 보이지 않는 입력칸을 프롬프트 줄 위에 겹쳐 두고 글자는 화면(그리드)에 그린다.
            입력칸 글자가 16px보다 작으면 iOS가 포커스할 때 화면을 확대하므로 16px로 둔다. JS가 없으면 숨긴다 */
@@ -344,6 +345,14 @@
         const CD_Y = NY_Y + 2;
         const END_Y = CD_Y + 2;
         const H = END_Y + 1;
+        // 고정 안내 문구: 카운트다운과 프롬프트 사이 빈 줄에 하나씩 번갈아 보여 준다 (DB에 저장하지 않음, 방명록 눈과 별개).
+        // 한 줄 61칸(한글 1자 = 2칸) 안에 들어가게 쓴다. 이모지 뒤의 보이지 않는 표시 기호(U+FE0F)는 칸 계산이 어긋나 빼고 그린다
+        const NOTICE = [
+            '익명이니 자유롭게 방명록을 남겨주세요!',
+            '박성준 월드에 오신 걸 환영합니다🎄',
+        ].map(s => s.replace(/\uFE0F/g, ''));
+        const NOTICE_Y = CD_Y + 1;
+        const NOTICE_MS = 4500;   // 문구 하나를 보여 주는 시간
 
         // wbox·wrb: 화이트 크리스마스 때의 상자·리본 색 (빨강·하양 교차)
         const GIFTS = [
@@ -632,12 +641,19 @@
                     for (const [s, k] of parts) x = text(x, CD_Y, s, k);
                 }
             }
+            if (e >= T.end && NOTICE.length) {
+                // 타자 치듯 한 글자씩 나타났다가, NOTICE_MS 마다 다음 문구로 바뀐다
+                const k = Math.floor((e - T.end) / NOTICE_MS);
+                const chars = [...NOTICE[k % NOTICE.length]];
+                const n = reduce ? chars.length : clamp(Math.floor(((e - T.end) % NOTICE_MS) / 45), 0, chars.length);
+                text(CX - Math.floor(colsOf(chars.join('')) / 2), NOTICE_Y, chars.slice(0, n).join(''), 'notice');
+            }
             if (e >= T.end) {
                 let x = drawPrompt(END_Y);
                 // 한글 조합 중에는 입력값이 잠깐 폭을 넘을 수 있어(조합이 끝나야 잘라냄), 화면에는 넘친 글자를 그리지 않는다
                 x = text(x, END_Y, clip(input.value), 'cmd');
                 if (blink) put(x, END_Y, '█', 'cur');
-                if (!input.value) text(x + 2, END_Y, coarse ? '메시지를 입력하면 방명록 눈이 내려요❄️' : '메시지를 입력하면 방명록 눈이 내려요❄️', 'lab');
+                if (!input.value) text(x + 2, END_Y, coarse ? '방명록을 남기면 방명록 눈이 내려요❄️' : '방명록을 남기면 방명록 눈이 내려요❄️', 'lab');
             }
 
             // 입력한 문구는 트리 앞으로 지나가게 그려서 읽을 수 있게 한다
