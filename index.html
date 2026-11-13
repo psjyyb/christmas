@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Merry Christmas</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎄</text></svg>">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    padding: 16px;
+    background:
+      radial-gradient(1100px 600px at 50% -10%, #1a2a52 0%, rgba(26,42,82,0) 70%),
+      radial-gradient(900px 500px at 50% 120%, #0e2a22 0%, rgba(14,42,34,0) 70%),
+      #060a14;
+    color: #c9d4e8;
+    font-family: "Cascadia Mono", "Cascadia Code", Consolas, "SF Mono", Menlo, Monaco, "DejaVu Sans Mono", "Liberation Mono", "Courier New", monospace;
+    overflow: auto;
+  }
+
+  .bokeh { position: fixed; inset: 0; pointer-events: none; overflow: hidden; z-index: 0; }
+  .bokeh span {
+    position: absolute; border-radius: 50%;
+    background: var(--c); filter: blur(70px); opacity: .13;
+    animation: drift 17s ease-in-out infinite alternate;
+  }
+  @keyframes drift { to { transform: translate(50px, -40px) scale(1.2); } }
+
+  .term {
+    position: relative; z-index: 1;
+    background: #0b111e;
+    border: 1px solid #222e47;
+    border-radius: 12px;
+    box-shadow: 0 30px 90px rgba(0,0,0,.65), 0 0 140px rgba(255,190,90,.05);
+    overflow: hidden;
+  }
+  .bar {
+    position: relative; height: 34px;
+    display: flex; align-items: center; gap: 8px; padding: 0 14px;
+    background: #141c2d; border-bottom: 1px solid #1e293f;
+  }
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .title {
+    position: absolute; left: 0; right: 0; text-align: center;
+    font-size: 12px; color: #6f7e9c; pointer-events: none;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 70px;
+  }
+
+  /* 폰의 파일 미리보기(iOS 파일 앱, 메신저 미리보기 등)는 JS를 실행하지 않으므로
+     글자 크기를 CSS로 먼저 화면에 맞춰 두고, JS가 돌면 fit()이 인라인 스타일로 덮어쓴다 */
+  .screen-wrap { position: relative; font-size: 16px; font-size: min(18px, calc((100vw - 72px) / 37), calc((100vh - 104px) / 45)); }
+  #screen { position: relative; z-index: 1; display: block; padding: 14px 18px 18px; line-height: 1.2; white-space: pre; font-family: inherit; font-size: inherit; }
+  @media (max-width: 599px) { #screen { padding: 10px 10px 14px; } }
+
+  /* ---- JS 없이 보이는 정적 화면용: CSS 애니메이션과 CSS 눈 (JS가 돌면 매 프레임 다시 그리므로 쓰이지 않음) ---- */
+  .snow { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+  .snow i {
+    position: absolute; top: -1.2em; font-style: normal; line-height: 1;
+    animation-name: fall, sway; animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: infinite; animation-direction: normal, alternate;
+  }
+  /* 34.8em = 바닥 줄(29번째 줄) × 줄높이 1.2em: 눈이 바닥에 닿으면 사라지게 */
+  @keyframes fall { 0% { top: -1.2em; opacity: 0; } 8% { opacity: 1; } 92% { opacity: 1; } 100% { top: calc(14px + 34.8em); opacity: 0; } }
+  @keyframes sway { from { transform: translateX(-.6em); } to { transform: translateX(.6em); } }
+  .js .snow { display: none; }
+  .tw { animation: tw 3s ease-in-out infinite; }
+  @keyframes tw { 0%, 100% { opacity: 1; text-shadow: 0 0 .35em currentColor, 0 0 .9em currentColor; } 55% { opacity: .3; text-shadow: none; } }
+  .ga { animation: ga 1s steps(1) infinite; }
+  @keyframes ga { 0% { color: #fff1c2; text-shadow: 0 0 6px #ffd43b, 0 0 12px #fab005; } 25% { color: #b8893a; text-shadow: none; } }
+  .gl { animation: gl 6s linear infinite; }
+  @keyframes gl { 0%, 93%, 100% { color: #45c867; text-shadow: none; } 96% { color: #f4fff6; text-shadow: 0 0 6px #b2f2bb, 0 0 12px #69db7c; } }
+  .pulse { animation: pulse 2.4s ease-in-out infinite; }
+  @keyframes pulse { 0%, 100% { text-shadow: 0 0 4px #ffd43b, 0 0 10px #fab005; } 50% { text-shadow: 0 0 8px #fff3bf, 0 0 22px #ffd43b, 0 0 42px #f76707; } }
+  .rf { animation: rf 2.8s ease-in-out infinite; }
+  @keyframes rf { 0%, 100% { opacity: 1; } 50% { opacity: .12; } }
+  .lc { animation: lc 1s steps(1) infinite; }
+  @keyframes lc { 0% { color: #ff6b6b; } 25% { color: #ffd43b; } 50% { color: #69db7c; } 75% { color: #f8f9fa; } }
+  .blink { animation: blink 1.06s steps(1) infinite; }
+  @keyframes blink { 50% { opacity: 0; } }
+  /* 비 ASCII 글리프(★ ▀ · █)는 한글 폰트로 폴백되면 전각 폭이 되어 줄이 어긋나므로 1칸 폭에 고정한다 */
+  #screen .w { display: inline-block; width: 1ch; height: 1.2em; line-height: 1.2em; vertical-align: top; text-align: center; font-style: normal; }
+
+  /* prompt */
+  .pr { color: #7ee787; } .pa { color: #79c0ff; } .cmd { color: #e6edf3; } .cur { color: #c9d4e8; }
+  /* tree */
+  .e  { color: #1d7337; }
+  .g1 { color: #2fa84f; } .g2 { color: #45c867; } .g3 { color: #23843f; }
+  .sp { color: #f4fff6; text-shadow: 0 0 6px #b2f2bb, 0 0 12px #69db7c; }
+  .t  { color: #b8893a; }
+  .t2 { color: #fff1c2; text-shadow: 0 0 6px #ffd43b, 0 0 12px #fab005; }
+  .r { color: #ff4d5e; } .y { color: #ffd43b; } .b { color: #4dabf7; }
+  .p { color: #f783ac; } .c { color: #63e6be; } .o { color: #ff922b; }
+  .on { text-shadow: 0 0 .35em currentColor, 0 0 .9em currentColor; }
+  .x  { opacity: .3; }
+  .star { color: #fff3bf; }
+  .s1 { text-shadow: 0 0 4px #ffd43b, 0 0 10px #fab005; }
+  .s2 { text-shadow: 0 0 6px #ffe066, 0 0 16px #fcc419, 0 0 28px #f08c00; }
+  .s3 { text-shadow: 0 0 8px #fff3bf, 0 0 22px #ffd43b, 0 0 42px #f76707; }
+  .ray  { color: #ffe8a3; text-shadow: 0 0 6px #fcc419; }
+  .rayd { color: #7d6e45; }
+  /* base */
+  .tr { color: #a0694a; } .tr2 { color: #6f4529; }
+  .bx1 { color: #f03e3e; } .bx2 { color: #4c8dff; } .bx3 { color: #cc5de8; } .bx4 { color: #20c997; }
+  .rb  { color: #ffd43b; } .rbw { color: #f8f9fa; }
+  .gd { color: #e4ecfb; } .gd2 { color: #8a9bbb; } .gd3 { color: #3f4c66; }
+  /* snow */
+  .sn1 { color: #4f5c76; } .sn2 { color: #95a3be; } .sn3 { color: #f1f5ff; text-shadow: 0 0 4px rgba(255,255,255,.55); }
+  /* text */
+  .L0, .L1, .L2, .L3 { font-weight: 700; text-shadow: 0 0 .4em currentColor; }
+  .L0 { color: #ff6b6b; } .L1 { color: #ffd43b; } .L2 { color: #69db7c; } .L3 { color: #f8f9fa; }
+  .ny { color: #e9c46a; } .lab { color: #66759a; } .num { color: #ffd8a8; }
+
+  @media (prefers-reduced-motion: reduce) { .bokeh span { animation: none; } }
+</style>
+</head>
+<body>
+  <div class="bokeh" aria-hidden="true">
+    <span style="--c:#ff4d5e; left:6%;  top:12%; width:260px; height:260px;"></span>
+    <span style="--c:#40c057; left:72%; top:8%;  width:320px; height:320px; animation-delay:-5s"></span>
+    <span style="--c:#fab005; left:58%; top:62%; width:280px; height:280px; animation-delay:-9s"></span>
+    <span style="--c:#4dabf7; left:14%; top:66%; width:240px; height:240px; animation-delay:-13s"></span>
+  </div>
+
+  <div class="term">
+    <div class="bar">
+      <span class="dot" style="background:#ff5f57"></span>
+      <span class="dot" style="background:#febc2e"></span>
+      <span class="dot" style="background:#28c840"></span>
+      <span class="title">santa@north-pole: ~ — merry-christmas</span>
+    </div>
+    <div class="screen-wrap">
+      <div class="snow" aria-hidden="true"><i class="sn2" style="left:65.7%;animation-duration:12.3s,2.7s;animation-delay:-2.5s,-1.0s">·</i><i class="sn3" style="left:21.8%;animation-duration:8.0s,4.8s;animation-delay:-7.8s,-1.4s">*</i><i class="sn2" style="left:9.6%;animation-duration:12.8s,4.2s;animation-delay:-7.2s,-0.9s">·</i><i class="sn2" style="left:19.8%;animation-duration:11.7s,3.8s;animation-delay:-1.6s,-3.9s">·</i><i class="sn1" style="left:11.7%;animation-duration:16.8s,2.8s;animation-delay:-13.2s,-1.0s">.</i><i class="sn3" style="left:64.7%;animation-duration:6.5s,2.9s;animation-delay:-3.4s,-1.7s">*</i><i class="sn3" style="left:88.7%;animation-duration:6.1s,3.0s;animation-delay:-3.5s,-0.4s">*</i><i class="sn2" style="left:42.6%;animation-duration:11.4s,2.4s;animation-delay:-6.3s,-1.8s">·</i><i class="sn3" style="left:94.3%;animation-duration:8.1s,3.0s;animation-delay:-4.7s,-3.0s">*</i><i class="sn2" style="left:19.3%;animation-duration:14.5s,4.8s;animation-delay:-5.9s,-0.7s">·</i><i class="sn3" style="left:12.9%;animation-duration:6.9s,2.5s;animation-delay:-5.8s,-2.6s">*</i><i class="sn2" style="left:48.6%;animation-duration:10.2s,2.6s;animation-delay:-6.6s,-2.0s">·</i><i class="sn2" style="left:1.0%;animation-duration:13.0s,3.8s;animation-delay:-11.2s,-2.6s">·</i><i class="sn1" style="left:1.6%;animation-duration:17.5s,4.0s;animation-delay:-14.8s,-0.7s">.</i><i class="sn3" style="left:56.3%;animation-duration:6.7s,2.1s;animation-delay:-1.2s,-0.6s">*</i><i class="sn2" style="left:50.5%;animation-duration:13.5s,3.9s;animation-delay:-7.9s,-0.4s">·</i><i class="sn2" style="left:74.3%;animation-duration:14.2s,2.6s;animation-delay:-13.1s,-0.1s">·</i><i class="sn1" style="left:26.4%;animation-duration:18.6s,2.6s;animation-delay:-13.9s,-2.8s">.</i><i class="sn3" style="left:33.8%;animation-duration:7.7s,3.0s;animation-delay:-1.3s,-1.8s">*</i><i class="sn3" style="left:34.4%;animation-duration:7.4s,5.0s;animation-delay:-2.2s,-1.2s">*</i><i class="sn1" style="left:58.2%;animation-duration:17.6s,3.4s;animation-delay:-11.8s,-0.9s">.</i><i class="sn1" style="left:74.2%;animation-duration:22.6s,3.3s;animation-delay:-7.1s,-2.5s">.</i><i class="sn1" style="left:8.7%;animation-duration:18.0s,4.6s;animation-delay:-7.9s,-3.1s">.</i><i class="sn3" style="left:65.3%;animation-duration:8.6s,4.9s;animation-delay:-7.8s,-0.2s">*</i><i class="sn2" style="left:6.9%;animation-duration:13.5s,3.9s;animation-delay:-12.4s,-2.1s">·</i><i class="sn2" style="left:79.5%;animation-duration:14.4s,3.1s;animation-delay:-8.6s,-2.4s">·</i><i class="sn1" style="left:25.0%;animation-duration:16.6s,3.2s;animation-delay:-6.7s,-1.0s">.</i><i class="sn2" style="left:75.8%;animation-duration:10.8s,2.9s;animation-delay:-2.6s,-1.6s">·</i><i class="sn2" style="left:47.2%;animation-duration:14.0s,2.8s;animation-delay:-8.8s,-0.6s">·</i><i class="sn1" style="left:69.4%;animation-duration:21.3s,4.2s;animation-delay:-18.9s,-2.8s">.</i><i class="sn2" style="left:12.1%;animation-duration:11.3s,2.3s;animation-delay:-10.1s,-2.7s">·</i><i class="sn1" style="left:37.2%;animation-duration:16.5s,4.9s;animation-delay:-3.0s,-2.2s">.</i><i class="sn2" style="left:87.5%;animation-duration:13.6s,2.9s;animation-delay:-0.0s,-2.5s">·</i><i class="sn1" style="left:36.7%;animation-duration:21.6s,4.3s;animation-delay:-1.2s,-1.0s">.</i><i class="sn1" style="left:83.7%;animation-duration:21.8s,3.4s;animation-delay:-18.7s,-2.1s">.</i><i class="sn2" style="left:63.3%;animation-duration:11.8s,2.4s;animation-delay:-8.2s,-2.9s">·</i><i class="sn1" style="left:22.5%;animation-duration:17.1s,2.9s;animation-delay:-9.3s,-1.3s">.</i><i class="sn3" style="left:20.7%;animation-duration:8.1s,3.5s;animation-delay:-3.5s,-1.0s">*</i><i class="sn2" style="left:46.1%;animation-duration:11.2s,4.7s;animation-delay:-0.1s,-2.4s">·</i><i class="sn2" style="left:24.0%;animation-duration:13.0s,2.1s;animation-delay:-11.8s,-2.7s">·</i><i class="sn2" style="left:74.5%;animation-duration:10.7s,3.8s;animation-delay:-10.1s,-2.3s">·</i><i class="sn2" style="left:32.4%;animation-duration:12.5s,4.3s;animation-delay:-3.4s,-2.9s">·</i><i class="sn2" style="left:42.1%;animation-duration:10.0s,3.9s;animation-delay:-7.9s,-3.3s">·</i><i class="sn2" style="left:91.7%;animation-duration:13.4s,3.0s;animation-delay:-5.7s,-1.8s">·</i><i class="sn2" style="left:35.4%;animation-duration:11.9s,2.5s;animation-delay:-9.3s,-2.3s">·</i></div>
+      <!-- 아래 내용은 JS가 꺼진 환경용 정적 화면. JS가 돌면 첫 프레임에서 통째로 교체된다 -->
+      <pre id="screen" role="img" aria-label="반짝이는 크리스마스 트리 애니메이션"> <span class="pr">santa@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ ./merry-christmas</span>                       
+                                                             
+                            <span class="ray rf" style="animation-delay:-0.0s">\</span> <span class="ray rf" style="animation-delay:-0.6s">|</span> <span class="ray rf" style="animation-delay:-1.2s">/</span>                            
+                           <span class="ray rf" style="animation-delay:-1.8s">-</span><span class="ray rf" style="animation-delay:-2.4s">-</span> <i class="w star pulse">★</i> <span class="ray rf" style="animation-delay:-3.0s">-</span><span class="ray rf" style="animation-delay:-3.6s">-</span>                           
+                             <span class="e">/</span><span class="g3">*</span><span class="e">\</span>                             
+                            <span class="e">/</span><span class="g1">*</span><span class="b tw" style="animation-duration:3.42s;animation-delay:-0.40s">o</span><span class="g1">*</span><span class="e">\</span>                            
+                           <span class="e">/</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:9.2s;animation-delay:-4.3s">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g3">^</span><span class="e">\</span>                           
+                          <span class="e">/</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">^</span><span class="g2">*</span><span class="y tw" style="animation-duration:2.87s;animation-delay:-0.54s">o</span><span class="g2">*</span><span class="e">\</span>                          
+                           <span class="e">/</span><span class="g1">*</span><span class="g2">^</span><span class="o tw" style="animation-duration:3.52s;animation-delay:-3.62s">@</span><span class="g1">*</span><span class="g2">*</span><span class="e">\</span>                           
+                          <span class="e">/</span><span class="g1">*</span><span class="g2">**</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="e">\</span>                          
+                         <span class="e">/</span><span class="o tw" style="animation-duration:2.54s;animation-delay:-3.57s">o</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="p tw" style="animation-duration:3.23s;animation-delay:-3.00s">o</span><span class="g2">*</span><span class="g1">**</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="e">\</span>                         
+                        <span class="e">/</span><span class="g1">^^*</span><span class="g3">**</span><span class="g1">*</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*</span><span class="g3">*</span><span class="e">\</span>                        
+                       <span class="e">/</span><span class="g2">*</span><span class="g1">**</span><span class="b tw" style="animation-duration:3.27s;animation-delay:-0.31s">o</span><span class="g2">*</span><span class="g1">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="o tw" style="animation-duration:3.22s;animation-delay:-2.74s">@</span><span class="g3">**</span><span class="g2">**</span><span class="e">\</span>                       
+                         <span class="e">/</span><span class="g1">*</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g2">*</span><span class="g1">*</span><span class="c tw" style="animation-duration:3.70s;animation-delay:-1.61s">@</span><span class="e">\</span>                         
+                        <span class="e">/</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g2">*</span><span class="g1">**</span><span class="g3">^</span><span class="g1">*</span><span class="g2">*</span><span class="e">\</span>                        
+                       <span class="e">/</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g2">**</span><span class="g3">*</span><span class="p tw" style="animation-duration:3.93s;animation-delay:-2.09s">o</span><span class="g1">^</span><span class="g3">*</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:9.6s;animation-delay:-6.5s">^</span><span class="g3">*</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="e">\</span>                       
+                      <span class="e">/</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g2 gl" style="animation-duration:6.7s;animation-delay:-5.9s">^</span><span class="g1">*</span><span class="g2">*</span><span class="g1">^*</span><span class="g3">*</span><span class="g1">*</span><span class="g3">**</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g2">*</span><span class="g1">*</span><span class="e">\</span>                      
+                     <span class="e">/</span><span class="g1">*^</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g1">****</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g3">*</span><span class="g2 gl" style="animation-duration:7.4s;animation-delay:-3.1s">*</span><span class="g3">*</span><span class="g2">**</span><span class="e">\</span>                     
+                    <span class="e">/</span><span class="g2">^</span><span class="g3">*</span><span class="g1">**</span><span class="g3">*</span><span class="g1">^</span><span class="y tw" style="animation-duration:3.88s;animation-delay:-2.94s">o</span><span class="g3">^</span><span class="g1">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g2">*^</span><span class="g1">*</span><span class="g2">*</span><span class="g3">^</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:7.0s;animation-delay:-6.2s">*</span><span class="g1">*</span><span class="e">\</span>                    
+                       <span class="e">/</span><span class="g1">^</span><span class="g2">*</span><span class="g3">*</span><span class="g2">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="c tw" style="animation-duration:3.41s;animation-delay:-2.08s">@</span><span class="g2">**</span><span class="p tw" style="animation-duration:3.88s;animation-delay:-1.83s">o</span><span class="g2">**</span><span class="g3">*</span><span class="e">\</span>                       
+                      <span class="e">/</span><span class="g1">***</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="g3">**</span><span class="g2">*</span><span class="g1">*</span><span class="g3">**</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:5.7s;animation-delay:-6.0s">*</span><span class="g1">**</span><span class="e">\</span>                      
+                     <span class="e">/</span><span class="g1">**</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g3">*</span><span class="r tw" style="animation-duration:2.74s;animation-delay:-0.09s">o</span><span class="g2">**</span><span class="g1">*</span><span class="g2">***</span><span class="p tw" style="animation-duration:4.02s;animation-delay:-1.45s">o</span><span class="g2">*</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g1">^</span><span class="e">\</span>                     
+                    <span class="e">/</span><span class="c tw" style="animation-duration:3.84s;animation-delay:-0.80s">o</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g1">***</span><span class="g2 gl" style="animation-duration:9.7s;animation-delay:-3.7s">^</span><span class="g1">*</span><span class="b tw" style="animation-duration:3.20s;animation-delay:-2.27s">o</span><span class="g1">*</span><span class="g2">**</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g1">*</span><span class="g2">*</span><span class="g1">**</span><span class="e">\</span>                    
+                   <span class="e">/</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="g2">*</span><span class="g1">**</span><span class="g3">*</span><span class="g1">**</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*^</span><span class="g2 gl" style="animation-duration:6.5s;animation-delay:-3.9s">*</span><span class="g3">*</span><span class="y tw" style="animation-duration:3.16s;animation-delay:-1.01s">o</span><span class="g2">*</span><span class="g3">*</span><span class="e">\</span>                   
+                  <span class="e">/</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g2">*</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g1">^*</span><span class="g2">***</span><span class="c tw" style="animation-duration:1.62s;animation-delay:-3.43s">O</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g1">*</span><span class="g2">*</span><span class="g1">*</span><span class="g2">*</span><span class="g1">******</span><span class="e">\</span>                  
+                 <span class="e">/</span><span class="g1">*^**</span><span class="g3">^*</span><span class="o tw" style="animation-duration:1.88s;animation-delay:-2.72s">o</span><span class="g2">*</span><span class="c tw" style="animation-duration:1.85s;animation-delay:-2.67s">@</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g2 gl" style="animation-duration:8.5s;animation-delay:-2.9s">*</span><span class="g1">^*</span><span class="g2">*</span><span class="g1">*^*</span><span class="p tw" style="animation-duration:2.50s;animation-delay:-0.67s">O</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="e">\</span>                 
+                     <span class="rb">&gt;o&lt;</span>    <span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span>          <span class="rbw">&gt;o&lt;</span>               
+              <span class="rbw">&gt;o&lt;</span>  <span class="bx1">[==</span><span class="rb">|</span><span class="bx1">==]</span>  <span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span>   <span class="rb">&gt;o&lt;</span>  <span class="bx4">[==</span><span class="rbw">|</span><span class="bx4">==]</span>             
+             <span class="bx2">[=</span><span class="rbw">|</span><span class="bx2">=]</span> <span class="bx1">[__</span><span class="rb">|</span><span class="bx1">__]</span>  <span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span>  <span class="bx3">[=</span><span class="rb">|</span><span class="bx3">=]</span> <span class="bx4">[__</span><span class="rbw">|</span><span class="bx4">__]</span>             
+   <i class="w gd3">▀</i><i class="w gd3">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd3">▀</i><i class="w gd3">▀</i>   
+                                                             
+                <span class="L0 lc" style="animation-delay:-0.00s">M</span> <span class="L0 lc" style="animation-delay:-0.50s">E</span> <span class="L0 lc" style="animation-delay:-1.00s">R</span> <span class="L0 lc" style="animation-delay:-1.50s">R</span> <span class="L0 lc" style="animation-delay:-2.00s">Y</span>   <span class="L0 lc" style="animation-delay:-3.00s">C</span> <span class="L0 lc" style="animation-delay:-3.50s">H</span> <span class="L0 lc" style="animation-delay:-4.00s">R</span> <span class="L0 lc" style="animation-delay:-4.50s">I</span> <span class="L0 lc" style="animation-delay:-5.00s">S</span> <span class="L0 lc" style="animation-delay:-5.50s">T</span> <span class="L0 lc" style="animation-delay:-6.00s">M</span> <span class="L0 lc" style="animation-delay:-6.50s">A</span> <span class="L0 lc" style="animation-delay:-7.00s">S</span>                
+                  <span class="ny">~ and a happy new year ~</span>                   
+                                                             
+                                                             
+                                                             
+ <span class="pr">santa@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ </span><i class="w cur blink">█</i>                                       </pre>
+    </div>
+  </div>
+
+<script>
+(() => {
+  'use strict';
+
+  const W = 61, CX = 30;
+  const screen = document.getElementById('screen');
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const rnd = Math.random;
+  const pick = a => a[Math.floor(rnd() * a.length)];
+  const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+  const CMD = './merry-christmas';
+
+  // ---------- 트리 모델: 로드할 때마다 장식 배치가 달라지도록 한 번만 무작위 생성
+  const TIERS = [[1, 4], [3, 7], [5, 10], [7, 13]];   // 단마다 [시작 반폭, 끝 반폭]
+  const RAY_Y = 2, STAR_Y = 3, TREE_TOP = 4;
+  const tree = [];
+  const orn = new Set();
+  let ty = TREE_TOP;
+  for (const [from, to] of TIERS) {
+    for (let hw = from; hw <= to; hw++, ty++) {
+      for (let dx = -hw; dx <= hw; dx++) {
+        const x = CX + dx;
+        if (dx === -hw) { tree.push({ x, y: ty, kind: 'edge', ch: '/' }); continue; }
+        if (dx === hw)  { tree.push({ x, y: ty, kind: 'edge', ch: '\\' }); continue; }
+        // 한 줄 내려갈 때 2칸 왼쪽으로 → 화면상 약 45° 대각선 띠가 된다
+        if (hw > 1 && (((dx + 2 * ty) % 12) + 12) % 12 < 2) { tree.push({ x, y: ty, kind: 'garland' }); continue; }
+        // 오너먼트끼리 붙어 뭉치지 않도록 왼쪽·윗줄 이웃을 피한다
+        const free = ![`${x - 1},${ty}`, `${x - 1},${ty - 1}`, `${x},${ty - 1}`, `${x + 1},${ty - 1}`].some(k => orn.has(k));
+        if (hw > 1 && free && rnd() < 0.17) {
+          orn.add(`${x},${ty}`);
+          tree.push({ x, y: ty, kind: 'orn', ch: pick(['o', 'o', 'o', '@', 'O']),
+                      color: pick(['r', 'y', 'b', 'p', 'c', 'o']), ph: rnd() * 6.283, sp: 1.2 + rnd() * 2.8 });
+          continue;
+        }
+        tree.push({ x, y: ty, kind: 'leaf', ch: rnd() < 0.14 ? '^' : '*', cls: pick(['g1', 'g1', 'g2', 'g3']), ph: rnd() * 1000 });
+      }
+    }
+  }
+  const BASE_Y = ty;              // 기둥·선물 시작 줄
+  const GROUND_Y = BASE_Y + 3;
+  const TITLE = 'M E R R Y   C H R I S T M A S';
+  const TITLE_Y = GROUND_Y + 2;
+  const NY_Y = TITLE_Y + 1;
+  const CD_Y = NY_Y + 2;
+  const END_Y = CD_Y + 2;
+  const H = END_Y + 1;
+
+  const GIFTS = [
+    { x: CX - 17, w: 5, box: 'bx2', rb: 'rbw' },
+    { x: CX - 11, w: 7, box: 'bx1', rb: 'rb' },
+    { x: CX + 5,  w: 5, box: 'bx3', rb: 'rb' },
+    { x: CX + 11, w: 7, box: 'bx4', rb: 'rbw' },
+  ];
+  const RAYS = [[CX - 2, RAY_Y, '\\'], [CX, RAY_Y, '|'], [CX + 2, RAY_Y, '/'],
+                [CX - 3, STAR_Y, '-'], [CX - 2, STAR_Y, '-'], [CX + 2, STAR_Y, '-'], [CX + 3, STAR_Y, '-']];
+
+  const now0 = new Date();
+  // 1월이면 막 시작된 해, 그 외에는 다가올 해를 축하한다
+  const NY = `~ and a happy new year ${now0.getFullYear() + (now0.getMonth() >= 1 ? 1 : 0)} ~`;
+
+  // ---------- 등장 타임라인(ms)
+  const T = {};
+  T.type = 350;  T.typeStep = 55;
+  T.tree = T.type + CMD.length * T.typeStep + 350;  T.rowStep = 45;
+  T.title = T.tree + (GROUND_Y - RAY_Y + 1) * T.rowStep + 250;  T.letterStep = 40;
+  T.ny = T.title + TITLE.length * T.letterStep + 200;  T.nyStep = 30;
+  T.cd = T.ny + NY.length * T.nyStep + 250;
+  T.end = T.cd + 350;
+  let t0 = performance.now() - (reduce ? 1e7 : 0);
+
+  // ---------- 눈
+  const flakes = Array.from({ length: reduce ? 18 : 55 }, () => spawn(rnd() * GROUND_Y));
+  function spawn(y) {
+    const layer = rnd() < 0.45 ? 0 : rnd() < 0.6 ? 1 : 2;
+    return { x: rnd() * W, y, layer,
+             vy: [1.1, 2.0, 3.2][layer] + rnd() * 0.8,
+             amp: 0.4 + rnd() * 1.2, fr: 0.4 + rnd() * 0.9, ph: rnd() * 6.283 };
+  }
+  const FLAKE = [['.', 'sn1'], ['·', 'sn2'], ['*', 'sn3']];
+
+  // ---------- 화면 버퍼
+  const chs = Array.from({ length: H }, () => new Array(W));
+  const cls = Array.from({ length: H }, () => new Array(W));
+  const clear = () => { for (let y = 0; y < H; y++) { chs[y].fill(' '); cls[y].fill(''); } };
+  const put = (x, y, c, k) => { if (x >= 0 && x < W && y >= 0 && y < H) { chs[y][x] = c; cls[y][x] = k || ''; } };
+  const text = (x, y, s, k) => { for (let i = 0; i < s.length; i++) put(x + i, y, s[i], k); return x + s.length; };
+  const centerX = s => CX - Math.floor(s.length / 2);
+
+  function drawPrompt(y) {
+    let x = text(1, y, 'santa@north-pole', 'pr');
+    x = text(x, y, ':', 'cmd');
+    x = text(x, y, '~', 'pa');
+    return text(x, y, '$ ', 'cmd');
+  }
+
+  function countdown(now) {
+    const yr = now.getFullYear();
+    const start = new Date(yr, 11, 25), end = new Date(yr, 11, 26);
+    if (now >= start && now < end) return null;
+    const target = now >= end ? new Date(yr + 1, 11, 25) : start;
+    let s = Math.floor((target - now) / 1000);
+    const d = Math.floor(s / 86400); s -= d * 86400;
+    const h = Math.floor(s / 3600);  s -= h * 3600;
+    const m = Math.floor(s / 60);    s -= m * 60;
+    return [d, h, m, s];
+  }
+
+  function render(nowMs) {
+    const e = nowMs - t0, t = nowMs / 1000;
+    const blink = Math.floor(nowMs / 530) % 2 === 0;
+    clear();
+
+    // 1) 프롬프트 + 명령어 타이핑
+    const px = drawPrompt(0);
+    const typed = clamp(Math.floor((e - T.type) / T.typeStep), 0, CMD.length);
+    text(px, 0, CMD.slice(0, typed), 'cmd');
+    if (e < T.tree && blink) put(px + typed, 0, '█', 'cur');
+
+    // 2) 별 → 트리 → 바닥 순서로 한 줄씩 자라남
+    const shown = Math.floor((e - T.tree) / T.rowStep);
+    const vis = y => e >= T.tree && (y - RAY_Y) < shown;
+
+    RAYS.forEach(([x, y, c], i) => {
+      if (!vis(y)) return;
+      const v = Math.sin(t * 2.2 + i * 1.7);
+      if (v > 0.1) put(x, y, c, 'ray'); else if (v > -0.6) put(x, y, c, 'rayd');
+    });
+    if (vis(STAR_Y)) {
+      const v = Math.sin(t * 2.6);
+      put(CX, STAR_Y, '★', 'star ' + (v > 0.5 ? 's3' : v > -0.3 ? 's2' : 's1'));
+    }
+
+    for (const c of tree) {
+      if (!vis(c.y)) continue;
+      switch (c.kind) {
+        case 'edge': put(c.x, c.y, c.ch, 'e'); break;
+        case 'garland': {
+          const lit = (((c.y - t * 6) % 6) + 6) % 6 < 1.5;
+          put(c.x, c.y, '~', lit ? 't2' : 't');
+          break;
+        }
+        case 'orn': {
+          const v = Math.sin(t * c.sp + c.ph);
+          put(c.x, c.y, c.ch, c.color + (v > 0.55 ? ' on' : v < -0.45 ? ' x' : ''));
+          break;
+        }
+        default:
+          if (Math.sin(t * 1.3 + c.ph) > 0.995) put(c.x, c.y, '*', 'sp');
+          else put(c.x, c.y, c.ch, c.cls);
+      }
+    }
+
+    for (let r = 0; r < 3; r++) {
+      const y = BASE_Y + r;
+      if (!vis(y)) continue;
+      text(CX - 2, y, '|', 'tr'); text(CX - 1, y, '###', 'tr2'); text(CX + 2, y, '|', 'tr');
+    }
+    for (const g of GIFTS) {
+      const mid = g.x + (g.w >> 1);
+      const n = (g.w - 3) >> 1;
+      const big = g.w >= 7;
+      const bowY = big ? BASE_Y : BASE_Y + 1;
+      if (vis(bowY)) text(mid - 1, bowY, '>o<', g.rb);
+      if (big && vis(BASE_Y + 1)) {
+        text(g.x, BASE_Y + 1, '[' + '='.repeat(n), g.box); put(mid, BASE_Y + 1, '|', g.rb); text(mid + 1, BASE_Y + 1, '='.repeat(n) + ']', g.box);
+      }
+      if (vis(BASE_Y + 2)) {
+        const fill = big ? '_' : '=';
+        text(g.x, BASE_Y + 2, '[' + fill.repeat(n), g.box); put(mid, BASE_Y + 2, '|', g.rb); text(mid + 1, BASE_Y + 2, fill.repeat(n) + ']', g.box);
+      }
+    }
+    if (vis(GROUND_Y)) {
+      for (let x = 3; x < W - 3; x++) {
+        const d = Math.abs(x - CX);
+        put(x, GROUND_Y, '▀', d > 25 ? 'gd3' : d > 21 ? 'gd2' : 'gd');
+      }
+    }
+
+    // 3) 문구
+    if (e >= T.title) {
+      const n = clamp(Math.floor((e - T.title) / T.letterStep), 0, TITLE.length);
+      const x0 = centerX(TITLE);
+      for (let i = 0; i < n; i++) {
+        if (TITLE[i] === ' ') continue;
+        put(x0 + i, TITLE_Y, TITLE[i], 'L' + ((i + Math.floor(t * 4)) % 4));
+      }
+    }
+    if (e >= T.ny) {
+      const n = clamp(Math.floor((e - T.ny) / T.nyStep), 0, NY.length);
+      text(centerX(NY), NY_Y, NY.slice(0, n), 'ny');
+    }
+    if (e >= T.cd) {
+      const cd = countdown(new Date());
+      if (!cd) {
+        const s = "* it's christmas today! *";
+        text(centerX(s), CD_Y, s, 'num on');
+      } else {
+        const p2 = v => String(v).padStart(2, '0');
+        const parts = [['christmas in ', 'lab'], [String(cd[0]), 'num'], ['d ', 'lab'], [p2(cd[1]), 'num'], ['h ', 'lab'],
+                       [p2(cd[2]), 'num'], ['m ', 'lab'], [p2(cd[3]), 'num'], ['s', 'lab']];
+        let x = centerX(parts.map(p => p[0]).join(''));
+        for (const [s, k] of parts) x = text(x, CD_Y, s, k);
+      }
+    }
+    if (e >= T.end) {
+      const x = drawPrompt(END_Y);
+      if (blink) put(x, END_Y, '█', 'cur');
+    }
+
+    // 4) 눈은 빈 칸에만 그려서 트리·글자 뒤로 지나가게 한다
+    for (const f of flakes) {
+      const x = Math.round(f.x + Math.sin(t * f.fr + f.ph) * f.amp);
+      const y = Math.floor(f.y);
+      if (y < 0 || y >= GROUND_Y || x < 0 || x >= W) continue;
+      if (chs[y][x] !== ' ' || cls[y][x] !== '') continue;
+      put(x, y, FLAKE[f.layer][0], FLAKE[f.layer][1]);
+    }
+
+    screen.innerHTML = toHTML();
+  }
+
+  const ESC = { '<': '&lt;', '>': '&gt;', '&': '&amp;' };
+  function toHTML() {
+    const out = [];
+    for (let y = 0; y < H; y++) {
+      let line = '', run = '', rk = null;
+      const flush = () => { if (run) line += rk ? `<span class="${rk}">${run}</span>` : run; run = ''; };
+      for (let x = 0; x < W; x++) {
+        const c = chs[y][x], k = cls[y][x];
+        if (c.charCodeAt(0) > 127) { flush(); rk = null; line += `<i class="w ${k}">${c}</i>`; continue; }
+        if (k !== rk) { flush(); rk = k; }
+        run += ESC[c] || c;
+      }
+      flush();
+      out.push(line);
+    }
+    return out.join('\n');
+  }
+
+  function updateSnow(dt) {
+    for (let i = 0; i < flakes.length; i++) {
+      const f = flakes[i];
+      f.y += f.vy * dt;
+      if (f.y >= GROUND_Y) flakes[i] = spawn(-rnd() * 3);
+    }
+  }
+
+  // ---------- 창 크기에 맞춰 글자 크기 조절
+  const probe = document.createElement('span');
+  probe.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;white-space:pre;font-size:100px;font-family:inherit';
+  probe.textContent = '0'.repeat(100);
+  document.body.appendChild(probe);
+  function fit() {
+    const ratio = probe.getBoundingClientRect().width / 100 / 100;
+    const small = innerWidth < 600;
+    const padX = small ? 10 : 18, padY = small ? 10 : 14;
+    const availW = innerWidth - 32 - 2 - padX * 2;
+    const availH = innerHeight - 32 - 34 - 2 - padY * 2 - 4;
+    const fs = clamp(Math.min(availW / (W * ratio), availH / (H * 1.2)), 6, 22);
+    screen.style.fontSize = fs.toFixed(2) + 'px';
+    screen.style.padding = `${padY}px ${padX}px ${padY + 4}px`;
+  }
+  addEventListener('resize', fit);
+  fit();
+
+  // R 키로 처음부터 다시 재생
+  addEventListener('keydown', ev => { if (ev.key === 'r' || ev.key === 'R') t0 = performance.now(); });
+
+  let last = performance.now();
+  function loop(nowMs) {
+    requestAnimationFrame(loop);
+    if (nowMs - last < 30) return;
+    updateSnow(Math.min(0.1, (nowMs - last) / 1000));
+    last = nowMs;
+    render(nowMs);
+  }
+  render(last);
+  // 첫 프레임이 성공한 뒤에만 CSS 눈을 끈다 — 중간에 JS가 실패하면 정적 화면이 그대로 남도록
+  document.documentElement.classList.add('js');
+  requestAnimationFrame(loop);
+})();
+</script>
+</body>
+</html>
