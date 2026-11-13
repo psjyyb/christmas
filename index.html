@@ -397,7 +397,7 @@
         const BOOM_SEC = 9;               // 축하 효과 길이(초)
         const booming = nowMs => nowMs - boomAt < BOOM_SEC * 1000;
         function startBoom(nowMs) {
-            if (reduce) return;   // 움직임 줄이기 설정이면 섬광·흔들림·불꽃 없이 테마만 바꾼다
+            // 움직임 줄이기 설정이어도 똑같이 보여 준다 (사용자 결정)
             boomAt = nowMs;
             // 첫 불꽃은 꼭대기 별에서 크게, 나머지는 하늘 여기저기서 차례로 터진다
             // 처음 2초는 여러 발이 한꺼번에(일제 사격), 그 뒤로는 하나둘씩 이어진다. 흰색은 눈과 섞여 안 보여서 빨강·금·초록만 쓴다
@@ -413,7 +413,7 @@
             root.classList.remove('boom'); void root.offsetWidth; root.classList.add('boom');   // 다시 붙여야 애니메이션이 새로 돈다
             setTimeout(() => root.classList.remove('boom'), 1500);
         }
-        const flakeTarget = () => reduce ? 30 : booming(performance.now()) ? 260 : white ? 140 : 100;
+        const flakeTarget = () => booming(performance.now()) ? 260 : reduce ? 30 : white ? 140 : 100;   // 눈보라는 움직임 줄이기 설정이어도 똑같이
         const flakes = Array.from({ length: flakeTarget() }, () => spawn(rnd() * GROUND_Y));
         function spawn(y) {
             const r = rnd(), layer = r < 0.35 ? 0 : r < 0.7 ? 1 : 2;
