@@ -79,8 +79,19 @@
   @keyframes lc { 0% { color: #ff6b6b; } 25% { color: #ffd43b; } 50% { color: #69db7c; } 75% { color: #f8f9fa; } }
   .blink { animation: blink 1.06s steps(1) infinite; }
   @keyframes blink { 50% { opacity: 0; } }
-  /* 비 ASCII 글리프(★ ▀ · █)는 한글 폰트로 폴백되면 전각 폭이 되어 줄이 어긋나므로 1칸 폭에 고정한다 */
-  #screen .w { display: inline-block; width: 1ch; height: 1.2em; line-height: 1.2em; vertical-align: top; text-align: center; font-style: normal; }
+  /* 전구 줄: 4색이 한 칸씩 밀려가는 체이스 (JS 버전의 (k + floor(2.5t)) % 4 와 같은 주기) */
+  .chase { animation: chase 1.6s steps(1) infinite; text-shadow: 0 0 .35em currentColor, 0 0 .9em currentColor; }
+  @keyframes chase { 0% { color: #ff4d5e; } 25% { color: #ffd43b; } 50% { color: #4dabf7; } 75% { color: #f783ac; } }
+  .rs { animation: rs 1.5s linear infinite; }
+  @keyframes rs { 0% { color: #ffe8a3; text-shadow: 0 0 6px #fcc419; } 17% { color: #7d6e45; text-shadow: none; } 42%, 100% { color: #4a432c; text-shadow: none; } }
+  .spk { animation: spk 3s linear infinite; }
+  @keyframes spk { 0%, 86%, 100% { opacity: 0; } 90% { opacity: 1; } }
+  .tw3 { animation: tw3 4s ease-in-out infinite; }
+  @keyframes tw3 { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+  /* 비 ASCII 글리프(★ ▀ · █)는 한글 폰트로 폴백되면 전각 폭이 되어 줄이 어긋나므로 1칸 폭에 고정한다.
+     한글처럼 원래 2칸인 글자는 w2로 2칸에 고정하고, 그리드에서도 2칸을 차지하게 한다 */
+  #screen .w, #screen .w2 { display: inline-block; width: 1ch; height: 1.2em; line-height: 1.2em; vertical-align: top; text-align: center; font-style: normal; }
+  #screen .w2 { width: 2ch; }
 
   /* prompt */
   .pr { color: #7ee787; } .pa { color: #79c0ff; } .cmd { color: #e6edf3; } .cur { color: #c9d4e8; }
@@ -99,7 +110,11 @@
   .s2 { text-shadow: 0 0 6px #ffe066, 0 0 16px #fcc419, 0 0 28px #f08c00; }
   .s3 { text-shadow: 0 0 8px #fff3bf, 0 0 22px #ffd43b, 0 0 42px #f76707; }
   .ray  { color: #ffe8a3; text-shadow: 0 0 6px #fcc419; }
-  .rayd { color: #7d6e45; }
+  .rayd { color: #7d6e45; } .rayx { color: #4a432c; }
+  .fr  { color: #cfe0f5; } .fr2 { color: #f1f6ff; text-shadow: 0 0 4px rgba(214,232,255,.6); }
+  /* sky */
+  .sk1 { color: #46526b; } .sk2 { color: #dbe4f5; text-shadow: 0 0 5px rgba(219,228,245,.7); }
+  .ss  { color: #ffffff; text-shadow: 0 0 6px #fff, 0 0 12px #a5d8ff; } .ssd { color: #8fa0bf; }
   /* base */
   .tr { color: #a0694a; } .tr2 { color: #6f4529; }
   .bx1 { color: #f03e3e; } .bx2 { color: #4c8dff; } .bx3 { color: #cc5de8; } .bx4 { color: #20c997; }
@@ -128,48 +143,48 @@
       <span class="dot" style="background:#ff5f57"></span>
       <span class="dot" style="background:#febc2e"></span>
       <span class="dot" style="background:#28c840"></span>
-      <span class="title">santa@north-pole: ~ — merry-christmas</span>
+      <span class="title">박성준@north-pole: ~ — merry-christmas</span>
     </div>
     <div class="screen-wrap">
-      <div class="snow" aria-hidden="true"><i class="sn2" style="left:65.7%;animation-duration:12.3s,2.7s;animation-delay:-2.5s,-1.0s">·</i><i class="sn3" style="left:21.8%;animation-duration:8.0s,4.8s;animation-delay:-7.8s,-1.4s">*</i><i class="sn2" style="left:9.6%;animation-duration:12.8s,4.2s;animation-delay:-7.2s,-0.9s">·</i><i class="sn2" style="left:19.8%;animation-duration:11.7s,3.8s;animation-delay:-1.6s,-3.9s">·</i><i class="sn1" style="left:11.7%;animation-duration:16.8s,2.8s;animation-delay:-13.2s,-1.0s">.</i><i class="sn3" style="left:64.7%;animation-duration:6.5s,2.9s;animation-delay:-3.4s,-1.7s">*</i><i class="sn3" style="left:88.7%;animation-duration:6.1s,3.0s;animation-delay:-3.5s,-0.4s">*</i><i class="sn2" style="left:42.6%;animation-duration:11.4s,2.4s;animation-delay:-6.3s,-1.8s">·</i><i class="sn3" style="left:94.3%;animation-duration:8.1s,3.0s;animation-delay:-4.7s,-3.0s">*</i><i class="sn2" style="left:19.3%;animation-duration:14.5s,4.8s;animation-delay:-5.9s,-0.7s">·</i><i class="sn3" style="left:12.9%;animation-duration:6.9s,2.5s;animation-delay:-5.8s,-2.6s">*</i><i class="sn2" style="left:48.6%;animation-duration:10.2s,2.6s;animation-delay:-6.6s,-2.0s">·</i><i class="sn2" style="left:1.0%;animation-duration:13.0s,3.8s;animation-delay:-11.2s,-2.6s">·</i><i class="sn1" style="left:1.6%;animation-duration:17.5s,4.0s;animation-delay:-14.8s,-0.7s">.</i><i class="sn3" style="left:56.3%;animation-duration:6.7s,2.1s;animation-delay:-1.2s,-0.6s">*</i><i class="sn2" style="left:50.5%;animation-duration:13.5s,3.9s;animation-delay:-7.9s,-0.4s">·</i><i class="sn2" style="left:74.3%;animation-duration:14.2s,2.6s;animation-delay:-13.1s,-0.1s">·</i><i class="sn1" style="left:26.4%;animation-duration:18.6s,2.6s;animation-delay:-13.9s,-2.8s">.</i><i class="sn3" style="left:33.8%;animation-duration:7.7s,3.0s;animation-delay:-1.3s,-1.8s">*</i><i class="sn3" style="left:34.4%;animation-duration:7.4s,5.0s;animation-delay:-2.2s,-1.2s">*</i><i class="sn1" style="left:58.2%;animation-duration:17.6s,3.4s;animation-delay:-11.8s,-0.9s">.</i><i class="sn1" style="left:74.2%;animation-duration:22.6s,3.3s;animation-delay:-7.1s,-2.5s">.</i><i class="sn1" style="left:8.7%;animation-duration:18.0s,4.6s;animation-delay:-7.9s,-3.1s">.</i><i class="sn3" style="left:65.3%;animation-duration:8.6s,4.9s;animation-delay:-7.8s,-0.2s">*</i><i class="sn2" style="left:6.9%;animation-duration:13.5s,3.9s;animation-delay:-12.4s,-2.1s">·</i><i class="sn2" style="left:79.5%;animation-duration:14.4s,3.1s;animation-delay:-8.6s,-2.4s">·</i><i class="sn1" style="left:25.0%;animation-duration:16.6s,3.2s;animation-delay:-6.7s,-1.0s">.</i><i class="sn2" style="left:75.8%;animation-duration:10.8s,2.9s;animation-delay:-2.6s,-1.6s">·</i><i class="sn2" style="left:47.2%;animation-duration:14.0s,2.8s;animation-delay:-8.8s,-0.6s">·</i><i class="sn1" style="left:69.4%;animation-duration:21.3s,4.2s;animation-delay:-18.9s,-2.8s">.</i><i class="sn2" style="left:12.1%;animation-duration:11.3s,2.3s;animation-delay:-10.1s,-2.7s">·</i><i class="sn1" style="left:37.2%;animation-duration:16.5s,4.9s;animation-delay:-3.0s,-2.2s">.</i><i class="sn2" style="left:87.5%;animation-duration:13.6s,2.9s;animation-delay:-0.0s,-2.5s">·</i><i class="sn1" style="left:36.7%;animation-duration:21.6s,4.3s;animation-delay:-1.2s,-1.0s">.</i><i class="sn1" style="left:83.7%;animation-duration:21.8s,3.4s;animation-delay:-18.7s,-2.1s">.</i><i class="sn2" style="left:63.3%;animation-duration:11.8s,2.4s;animation-delay:-8.2s,-2.9s">·</i><i class="sn1" style="left:22.5%;animation-duration:17.1s,2.9s;animation-delay:-9.3s,-1.3s">.</i><i class="sn3" style="left:20.7%;animation-duration:8.1s,3.5s;animation-delay:-3.5s,-1.0s">*</i><i class="sn2" style="left:46.1%;animation-duration:11.2s,4.7s;animation-delay:-0.1s,-2.4s">·</i><i class="sn2" style="left:24.0%;animation-duration:13.0s,2.1s;animation-delay:-11.8s,-2.7s">·</i><i class="sn2" style="left:74.5%;animation-duration:10.7s,3.8s;animation-delay:-10.1s,-2.3s">·</i><i class="sn2" style="left:32.4%;animation-duration:12.5s,4.3s;animation-delay:-3.4s,-2.9s">·</i><i class="sn2" style="left:42.1%;animation-duration:10.0s,3.9s;animation-delay:-7.9s,-3.3s">·</i><i class="sn2" style="left:91.7%;animation-duration:13.4s,3.0s;animation-delay:-5.7s,-1.8s">·</i><i class="sn2" style="left:35.4%;animation-duration:11.9s,2.5s;animation-delay:-9.3s,-2.3s">·</i></div>
+      <div class="snow" aria-hidden="true"><i class="sn1" style="left:84.6%;animation-duration:17.8s,3.9s;animation-delay:-17.5s,-3.2s">.</i><i class="sn1" style="left:41.8%;animation-duration:20.6s,3.6s;animation-delay:-16.1s,-3.1s">.</i><i class="sn2" style="left:10.6%;animation-duration:11.6s,4.9s;animation-delay:-3.5s,-0.6s">·</i><i class="sn1" style="left:55.0%;animation-duration:18.6s,3.4s;animation-delay:-10.4s,-2.4s">.</i><i class="sn2" style="left:57.4%;animation-duration:14.8s,4.3s;animation-delay:-8.9s,-1.5s">·</i><i class="sn3" style="left:40.4%;animation-duration:8.8s,2.6s;animation-delay:-4.8s,-2.6s">*</i><i class="sn3" style="left:82.6%;animation-duration:6.5s,4.0s;animation-delay:-3.4s,-1.5s">*</i><i class="sn1" style="left:20.2%;animation-duration:16.3s,3.9s;animation-delay:-8.1s,-4.0s">.</i><i class="sn3" style="left:59.4%;animation-duration:6.0s,4.6s;animation-delay:-3.9s,-1.2s">*</i><i class="sn1" style="left:65.9%;animation-duration:19.5s,4.5s;animation-delay:-3.4s,-2.4s">.</i><i class="sn2" style="left:2.7%;animation-duration:11.1s,2.5s;animation-delay:-1.7s,-2.3s">·</i><i class="sn1" style="left:50.5%;animation-duration:18.0s,3.9s;animation-delay:-10.6s,-0.4s">.</i><i class="sn2" style="left:74.3%;animation-duration:14.2s,2.6s;animation-delay:-13.1s,-0.1s">·</i><i class="sn1" style="left:26.4%;animation-duration:18.6s,2.6s;animation-delay:-13.9s,-2.8s">.</i><i class="sn3" style="left:33.8%;animation-duration:7.7s,3.0s;animation-delay:-1.3s,-1.8s">*</i><i class="sn3" style="left:34.4%;animation-duration:7.4s,5.0s;animation-delay:-2.2s,-1.2s">*</i><i class="sn1" style="left:58.2%;animation-duration:17.6s,3.4s;animation-delay:-11.8s,-0.9s">.</i><i class="sn1" style="left:74.2%;animation-duration:22.6s,3.3s;animation-delay:-7.1s,-2.5s">.</i><i class="sn1" style="left:8.7%;animation-duration:18.0s,4.6s;animation-delay:-7.9s,-3.1s">.</i><i class="sn3" style="left:65.3%;animation-duration:8.6s,4.9s;animation-delay:-7.8s,-0.2s">*</i><i class="sn2" style="left:6.9%;animation-duration:13.5s,3.9s;animation-delay:-12.4s,-2.1s">·</i><i class="sn2" style="left:79.5%;animation-duration:14.4s,3.1s;animation-delay:-8.6s,-2.4s">·</i><i class="sn1" style="left:25.0%;animation-duration:16.6s,3.2s;animation-delay:-6.7s,-1.0s">.</i><i class="sn2" style="left:75.8%;animation-duration:10.8s,2.9s;animation-delay:-2.6s,-1.6s">·</i><i class="sn2" style="left:47.2%;animation-duration:14.0s,2.8s;animation-delay:-8.8s,-0.6s">·</i><i class="sn1" style="left:69.4%;animation-duration:21.3s,4.2s;animation-delay:-18.9s,-2.8s">.</i><i class="sn2" style="left:12.1%;animation-duration:11.3s,2.3s;animation-delay:-10.1s,-2.7s">·</i><i class="sn1" style="left:37.2%;animation-duration:16.5s,4.9s;animation-delay:-3.0s,-2.2s">.</i><i class="sn2" style="left:87.5%;animation-duration:13.6s,2.9s;animation-delay:-0.0s,-2.5s">·</i><i class="sn1" style="left:36.7%;animation-duration:21.6s,4.3s;animation-delay:-1.2s,-1.0s">.</i><i class="sn1" style="left:83.7%;animation-duration:21.8s,3.4s;animation-delay:-18.7s,-2.1s">.</i><i class="sn2" style="left:63.3%;animation-duration:11.8s,2.4s;animation-delay:-8.2s,-2.9s">·</i><i class="sn1" style="left:22.5%;animation-duration:17.1s,2.9s;animation-delay:-9.3s,-1.3s">.</i><i class="sn3" style="left:20.7%;animation-duration:8.1s,3.5s;animation-delay:-3.5s,-1.0s">*</i><i class="sn2" style="left:46.1%;animation-duration:11.2s,4.7s;animation-delay:-0.1s,-2.4s">·</i><i class="sn2" style="left:24.0%;animation-duration:13.0s,2.1s;animation-delay:-11.8s,-2.7s">·</i><i class="sn2" style="left:74.5%;animation-duration:10.7s,3.8s;animation-delay:-10.1s,-2.3s">·</i><i class="sn2" style="left:32.4%;animation-duration:12.5s,4.3s;animation-delay:-3.4s,-2.9s">·</i><i class="sn2" style="left:42.1%;animation-duration:10.0s,3.9s;animation-delay:-7.9s,-3.3s">·</i><i class="sn2" style="left:91.7%;animation-duration:13.4s,3.0s;animation-delay:-5.7s,-1.8s">·</i><i class="sn2" style="left:35.4%;animation-duration:11.9s,2.5s;animation-delay:-9.3s,-2.3s">·</i><i class="sn3" style="left:30.8%;animation-duration:7.7s,3.9s;animation-delay:-2.4s,-3.5s">*</i><i class="sn1" style="left:29.5%;animation-duration:19.8s,3.7s;animation-delay:-8.3s,-0.0s">.</i><i class="sn1" style="left:28.4%;animation-duration:20.0s,4.4s;animation-delay:-19.8s,-2.4s">.</i><i class="sn3" style="left:49.8%;animation-duration:7.7s,4.1s;animation-delay:-0.1s,-1.4s">*</i></div>
       <!-- 아래 내용은 JS가 꺼진 환경용 정적 화면. JS가 돌면 첫 프레임에서 통째로 교체된다 -->
-      <pre id="screen" role="img" aria-label="반짝이는 크리스마스 트리 애니메이션"> <span class="pr">santa@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ ./merry-christmas</span>                       
-                                                             
-                            <span class="ray rf" style="animation-delay:-0.0s">\</span> <span class="ray rf" style="animation-delay:-0.6s">|</span> <span class="ray rf" style="animation-delay:-1.2s">/</span>                            
-                           <span class="ray rf" style="animation-delay:-1.8s">-</span><span class="ray rf" style="animation-delay:-2.4s">-</span> <i class="w star pulse">★</i> <span class="ray rf" style="animation-delay:-3.0s">-</span><span class="ray rf" style="animation-delay:-3.6s">-</span>                           
-                             <span class="e">/</span><span class="g3">*</span><span class="e">\</span>                             
-                            <span class="e">/</span><span class="g1">*</span><span class="b tw" style="animation-duration:3.42s;animation-delay:-0.40s">o</span><span class="g1">*</span><span class="e">\</span>                            
-                           <span class="e">/</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:9.2s;animation-delay:-4.3s">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g3">^</span><span class="e">\</span>                           
-                          <span class="e">/</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">^</span><span class="g2">*</span><span class="y tw" style="animation-duration:2.87s;animation-delay:-0.54s">o</span><span class="g2">*</span><span class="e">\</span>                          
-                           <span class="e">/</span><span class="g1">*</span><span class="g2">^</span><span class="o tw" style="animation-duration:3.52s;animation-delay:-3.62s">@</span><span class="g1">*</span><span class="g2">*</span><span class="e">\</span>                           
-                          <span class="e">/</span><span class="g1">*</span><span class="g2">**</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="e">\</span>                          
-                         <span class="e">/</span><span class="o tw" style="animation-duration:2.54s;animation-delay:-3.57s">o</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="p tw" style="animation-duration:3.23s;animation-delay:-3.00s">o</span><span class="g2">*</span><span class="g1">**</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="e">\</span>                         
-                        <span class="e">/</span><span class="g1">^^*</span><span class="g3">**</span><span class="g1">*</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*</span><span class="g3">*</span><span class="e">\</span>                        
-                       <span class="e">/</span><span class="g2">*</span><span class="g1">**</span><span class="b tw" style="animation-duration:3.27s;animation-delay:-0.31s">o</span><span class="g2">*</span><span class="g1">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="o tw" style="animation-duration:3.22s;animation-delay:-2.74s">@</span><span class="g3">**</span><span class="g2">**</span><span class="e">\</span>                       
-                         <span class="e">/</span><span class="g1">*</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g2">*</span><span class="g1">*</span><span class="c tw" style="animation-duration:3.70s;animation-delay:-1.61s">@</span><span class="e">\</span>                         
-                        <span class="e">/</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g2">*</span><span class="g1">**</span><span class="g3">^</span><span class="g1">*</span><span class="g2">*</span><span class="e">\</span>                        
-                       <span class="e">/</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g2">**</span><span class="g3">*</span><span class="p tw" style="animation-duration:3.93s;animation-delay:-2.09s">o</span><span class="g1">^</span><span class="g3">*</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:9.6s;animation-delay:-6.5s">^</span><span class="g3">*</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="e">\</span>                       
-                      <span class="e">/</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g2 gl" style="animation-duration:6.7s;animation-delay:-5.9s">^</span><span class="g1">*</span><span class="g2">*</span><span class="g1">^*</span><span class="g3">*</span><span class="g1">*</span><span class="g3">**</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g2">*</span><span class="g1">*</span><span class="e">\</span>                      
-                     <span class="e">/</span><span class="g1">*^</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g1">****</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g3">*</span><span class="g2 gl" style="animation-duration:7.4s;animation-delay:-3.1s">*</span><span class="g3">*</span><span class="g2">**</span><span class="e">\</span>                     
-                    <span class="e">/</span><span class="g2">^</span><span class="g3">*</span><span class="g1">**</span><span class="g3">*</span><span class="g1">^</span><span class="y tw" style="animation-duration:3.88s;animation-delay:-2.94s">o</span><span class="g3">^</span><span class="g1">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g2">*^</span><span class="g1">*</span><span class="g2">*</span><span class="g3">^</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:7.0s;animation-delay:-6.2s">*</span><span class="g1">*</span><span class="e">\</span>                    
-                       <span class="e">/</span><span class="g1">^</span><span class="g2">*</span><span class="g3">*</span><span class="g2">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="c tw" style="animation-duration:3.41s;animation-delay:-2.08s">@</span><span class="g2">**</span><span class="p tw" style="animation-duration:3.88s;animation-delay:-1.83s">o</span><span class="g2">**</span><span class="g3">*</span><span class="e">\</span>                       
-                      <span class="e">/</span><span class="g1">***</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="g3">**</span><span class="g2">*</span><span class="g1">*</span><span class="g3">**</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:5.7s;animation-delay:-6.0s">*</span><span class="g1">**</span><span class="e">\</span>                      
-                     <span class="e">/</span><span class="g1">**</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g3">*</span><span class="r tw" style="animation-duration:2.74s;animation-delay:-0.09s">o</span><span class="g2">**</span><span class="g1">*</span><span class="g2">***</span><span class="p tw" style="animation-duration:4.02s;animation-delay:-1.45s">o</span><span class="g2">*</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g1">^</span><span class="e">\</span>                     
-                    <span class="e">/</span><span class="c tw" style="animation-duration:3.84s;animation-delay:-0.80s">o</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g1">***</span><span class="g2 gl" style="animation-duration:9.7s;animation-delay:-3.7s">^</span><span class="g1">*</span><span class="b tw" style="animation-duration:3.20s;animation-delay:-2.27s">o</span><span class="g1">*</span><span class="g2">**</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g1">*</span><span class="g2">*</span><span class="g1">**</span><span class="e">\</span>                    
-                   <span class="e">/</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="g2">*</span><span class="g1">**</span><span class="g3">*</span><span class="g1">**</span><span class="g2">^</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*^</span><span class="g2 gl" style="animation-duration:6.5s;animation-delay:-3.9s">*</span><span class="g3">*</span><span class="y tw" style="animation-duration:3.16s;animation-delay:-1.01s">o</span><span class="g2">*</span><span class="g3">*</span><span class="e">\</span>                   
-                  <span class="e">/</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g2">*</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g1">^*</span><span class="g2">***</span><span class="c tw" style="animation-duration:1.62s;animation-delay:-3.43s">O</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g1">*</span><span class="g2">*</span><span class="g1">*</span><span class="g2">*</span><span class="g1">******</span><span class="e">\</span>                  
-                 <span class="e">/</span><span class="g1">*^**</span><span class="g3">^*</span><span class="o tw" style="animation-duration:1.88s;animation-delay:-2.72s">o</span><span class="g2">*</span><span class="c tw" style="animation-duration:1.85s;animation-delay:-2.67s">@</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="g3">*</span><span class="g2 gl" style="animation-duration:8.5s;animation-delay:-2.9s">*</span><span class="g1">^*</span><span class="g2">*</span><span class="g1">*^*</span><span class="p tw" style="animation-duration:2.50s;animation-delay:-0.67s">O</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="e">\</span>                 
+      <pre id="screen" role="img" aria-label="반짝이는 크리스마스 트리 애니메이션"> <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ ./merry-christmas</span>                      
+                           <span class="sp spk" style="animation-duration:2.8s;animation-delay:-4.4s">+</span> <span class="sp spk" style="animation-duration:2.9s;animation-delay:-1.4s">+</span>    <span class="sk1 tw3" style="animation-duration:4.1s;animation-delay:-5.7s">.</span>                          
+                          <span class="sp spk" style="animation-duration:2.3s;animation-delay:-4.4s">+</span><span class="sp spk" style="animation-duration:3.5s;animation-delay:-0.4s">+</span><span class="rs" style="animation-delay:-0.25s">\</span> <span class="rs" style="animation-delay:-1.50s">|</span> <span class="rs" style="animation-delay:-1.25s">/</span><span class="sp spk" style="animation-duration:2.5s;animation-delay:-2.8s">+</span>  <span class="sp spk" style="animation-duration:4.4s;animation-delay:-0.3s">+</span>                        
+                      <span class="sk1 tw3" style="animation-duration:4.4s;animation-delay:-5.8s">.</span>    <span class="rs" style="animation-delay:-0.50s">-</span><span class="rs" style="animation-delay:-0.50s">-</span> <i class="w star pulse">★</i> <span class="rs" style="animation-delay:-1.00s">-</span><span class="rs" style="animation-delay:-1.00s">-</span>                           
+   <span class="sk2 tw3" style="animation-duration:3.7s;animation-delay:-0.6s">+</span>        <span class="sk1 tw3" style="animation-duration:5.8s;animation-delay:-0.4s">.</span>                <span class="e">/</span><span class="g1">*</span><span class="e">\</span>                             
+   <span class="sk1 tw3" style="animation-duration:5.4s;animation-delay:-3.0s">.</span>               <span class="sk1 tw3" style="animation-duration:3.3s;animation-delay:-4.7s">.</span>        <span class="e">/</span><span class="r tw" style="animation-duration:2.21s;animation-delay:-1.45s">@</span><span class="g3">**</span><span class="e">\</span>                            
+                           <span class="e">/</span><span class="fr2">*</span><span class="g2 gl" style="animation-duration:9.2s;animation-delay:-4.3s">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="o tw" style="animation-duration:3.94s;animation-delay:-0.11s">O</span><span class="e">\</span>                  <span class="sk1 tw3" style="animation-duration:5.7s;animation-delay:-0.9s">.</span>    <span class="sk1 tw3" style="animation-duration:3.4s;animation-delay:-0.4s">.</span>   
+                   <span class="sk1 tw3" style="animation-duration:5.0s;animation-delay:-1.4s">.</span>      <span class="fr">/</span><span class="fr2">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="y tw" style="animation-duration:1.69s;animation-delay:-1.20s">O</span><span class="g3">*</span><span class="g1">*</span><span class="fr2">*</span><span class="fr">\</span>                          
+                           <span class="e">/</span><span class="fr2">*</span><span class="g1">*</span><span class="g2">*</span><span class="g3">*</span><span class="fr2">*</span><span class="e">\</span>                 <span class="sk2 tw3" style="animation-duration:4.0s;animation-delay:-4.5s">+</span>         
+                          <span class="e">/</span><span class="r chase" style="animation-delay:-0.0s">o</span><span class="g2">^</span><span class="o tw" style="animation-duration:3.52s;animation-delay:-3.62s">O</span><span class="g1">*</span><span class="g2">*</span><span class="g3">*</span><span class="r chase" style="animation-delay:-1.2s">o</span><span class="e">\</span>             <span class="sk1 tw3" style="animation-duration:5.7s;animation-delay:-2.3s">.</span>         <span class="sk2 tw3" style="animation-duration:3.5s;animation-delay:-3.2s">+</span>  
+     <span class="sk2 tw3" style="animation-duration:5.3s;animation-delay:-3.6s">+</span><span class="sk1 tw3" style="animation-duration:4.6s;animation-delay:-3.1s">.</span>            <span class="sk1 tw3" style="animation-duration:3.9s;animation-delay:-1.8s">.</span>     <span class="e">/</span><span class="g2">*</span><span class="g3">*</span><span class="g1">*</span><span class="g3">*</span><span class="g2">*</span><span class="g1">^</span><span class="g3">**</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="e">\</span>           <span class="sk2 tw3" style="animation-duration:5.3s;animation-delay:-1.7s">+</span>    <span class="sk1 tw3" style="animation-duration:5.5s;animation-delay:-2.9s">.</span>        
+    <span class="sk1 tw3" style="animation-duration:3.3s;animation-delay:-4.0s">.</span>                   <span class="e">/</span><span class="g1">*</span><span class="p tw" style="animation-duration:3.23s;animation-delay:-3.00s">@</span><span class="g2">*</span><span class="g1">*</span><span class="r chase" style="animation-delay:-0.4s">o</span><span class="g1">*</span><span class="r chase" style="animation-delay:-0.8s">o</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="r tw" style="animation-duration:1.88s;animation-delay:-3.99s">@</span><span class="fr2">*</span><span class="e">\</span>                        
+              <span class="sk2 tw3" style="animation-duration:3.6s;animation-delay:-5.3s">+</span>  <span class="sk2 tw3" style="animation-duration:6.0s;animation-delay:-1.4s">+</span>     <span class="fr">/</span><span class="fr2">*</span><span class="g1">****</span><span class="g2">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g2">*</span><span class="g3">*</span><span class="g1">**</span><span class="fr2">*</span><span class="fr">\</span>                       
+                         <span class="e">/</span><span class="p tw" style="animation-duration:3.66s;animation-delay:-0.44s">O</span><span class="g1">^</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g2">^</span><span class="g3">*^**</span><span class="e">\</span>               <span class="sk1 tw3" style="animation-duration:3.5s;animation-delay:-4.1s">.</span>         
+          <span class="sk1 tw3" style="animation-duration:3.6s;animation-delay:-1.0s">.</span>           <span class="sk1 tw3" style="animation-duration:5.7s;animation-delay:-5.3s">.</span> <span class="e">/</span><span class="r chase" style="animation-delay:-1.6s">o</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="g2">**</span><span class="g1">^</span><span class="g3">*</span><span class="g2">**</span><span class="g2 gl" style="animation-duration:4.7s;animation-delay:-7.5s">*</span><span class="r chase" style="animation-delay:-3.6s">o</span><span class="e">\</span>                        
+                       <span class="e">/</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g2">*</span><span class="g3">*</span><span class="g1">^</span><span class="g3">*</span><span class="g2">**</span><span class="r tw" style="animation-duration:3.03s;animation-delay:-3.42s">O</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="e">\</span>                       
+                      <span class="e">/</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g2">**</span><span class="g2 gl" style="animation-duration:4.9s;animation-delay:-1.2s">*</span><span class="r chase" style="animation-delay:-2.0s">o</span><span class="g3">*</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:9.6s;animation-delay:-6.5s">^</span><span class="g1">**</span><span class="r chase" style="animation-delay:-3.2s">o</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g1">*</span><span class="fr2">*</span><span class="e">\</span>                      
+                     <span class="e">/</span><span class="g2">*</span><span class="g1">***</span><span class="g3">*</span><span class="g2">^*</span><span class="r chase" style="animation-delay:-2.4s">o</span><span class="g1">*</span><span class="r chase" style="animation-delay:-2.8s">o</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g2">**</span><span class="g1">**</span><span class="fr2">*</span><span class="e">\</span>                     
+                    <span class="fr">/</span><span class="fr2">**</span><span class="g1">*</span><span class="g3">**</span><span class="g1">***</span><span class="g2">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g1">***</span><span class="g2">*</span><span class="g3">**</span><span class="fr2">**</span><span class="fr">\</span>                    
+                       <span class="e">/</span><span class="g2 gl" style="animation-duration:5.7s;animation-delay:-6.1s">*</span><span class="g3">*</span><span class="g1">**</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g3">*</span><span class="g1">^</span><span class="y tw" style="animation-duration:3.88s;animation-delay:-2.94s">@</span><span class="g3">^</span><span class="g1">*</span><span class="g2">*</span><span class="p tw" style="animation-duration:4.08s;animation-delay:-1.70s">@</span><span class="e">\</span>                       
+                      <span class="e">/</span><span class="r chase" style="animation-delay:-4.0s">o</span><span class="g1">**</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="t ga" style="animation-delay:-0.667s">~</span><span class="o tw" style="animation-duration:3.22s;animation-delay:-1.04s">@</span><span class="g1">*</span><span class="p tw" style="animation-duration:2.72s;animation-delay:-2.18s">O</span><span class="g2">*</span><span class="g1">^</span><span class="g3">**</span><span class="g2">*</span><span class="g3">^</span><span class="r chase" style="animation-delay:-6.8s">o</span><span class="e">\</span>                      
+                     <span class="e">/</span><span class="g2">**</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="r chase" style="animation-delay:-4.4s">o</span><span class="g3">^</span><span class="g1">*</span><span class="g3">*</span><span class="g1">*</span><span class="g3">**</span><span class="y tw" style="animation-duration:3.25s;animation-delay:-0.17s">O</span><span class="g3">*</span><span class="o tw" style="animation-duration:2.57s;animation-delay:-3.85s">@</span><span class="r chase" style="animation-delay:-6.4s">o</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="t ga" style="animation-delay:-0.500s">~</span><span class="g2">*</span><span class="e">\</span>                     
+                    <span class="e">/</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g3">*</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:5.7s;animation-delay:-6.0s">*</span><span class="r chase" style="animation-delay:-4.8s">o</span><span class="g1">****^</span><span class="r chase" style="animation-delay:-6.0s">o</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="t ga" style="animation-delay:-0.333s">~</span><span class="g2">*</span><span class="r tw" style="animation-duration:2.45s;animation-delay:-1.79s">O</span><span class="g3">*</span><span class="fr2">*</span><span class="e">\</span>                    
+                   <span class="e">/</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">*</span><span class="g2">***</span><span class="g3">^</span><span class="g2">*</span><span class="g1">^</span><span class="r chase" style="animation-delay:-5.2s">o</span><span class="g3">*</span><span class="r chase" style="animation-delay:-5.6s">o</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="t ga" style="animation-delay:-0.167s">~</span><span class="g1">**</span><span class="g2">*</span><span class="g1">**</span><span class="g2 gl" style="animation-duration:6.5s;animation-delay:-4.8s">*</span><span class="g1">*</span><span class="e">\</span>                   
+                  <span class="e">/</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g1">**</span><span class="g3">^</span><span class="o tw" style="animation-duration:2.93s;animation-delay:-1.46s">@</span><span class="g1">**</span><span class="g2">*</span><span class="g1">*</span><span class="g2">*</span><span class="g1">*</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="t ga" style="animation-delay:-1.000s">~</span><span class="g1">*</span><span class="p tw" style="animation-duration:1.79s;animation-delay:-0.90s">@</span><span class="g3">*</span><span class="g1">**</span><span class="g2">*</span><span class="g1">**</span><span class="b tw" style="animation-duration:3.08s;animation-delay:-2.08s">O</span><span class="g1">*</span><span class="e">\</span>                  
+                 <span class="fr">/</span><span class="fr2">**</span><span class="g2">*</span><span class="g3">*</span><span class="g1">*</span><span class="g2">*</span><span class="g1">*</span><span class="g2">**</span><span class="g2 gl" style="animation-duration:9.4s;animation-delay:-3.8s">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="g1">*</span><span class="g2">*</span><span class="g1">***</span><span class="g2 gl" style="animation-duration:9.1s;animation-delay:-1.7s">*</span><span class="g2">*</span><span class="g1">*</span><span class="g2 gl" style="animation-duration:9.9s;animation-delay:-5.0s">*</span><span class="g3">*</span><span class="t ga" style="animation-delay:-0.833s">~</span><span class="fr2">**</span><span class="fr">\</span>                 
                      <span class="rb">&gt;o&lt;</span>    <span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span>          <span class="rbw">&gt;o&lt;</span>               
               <span class="rbw">&gt;o&lt;</span>  <span class="bx1">[==</span><span class="rb">|</span><span class="bx1">==]</span>  <span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span>   <span class="rb">&gt;o&lt;</span>  <span class="bx4">[==</span><span class="rbw">|</span><span class="bx4">==]</span>             
-             <span class="bx2">[=</span><span class="rbw">|</span><span class="bx2">=]</span> <span class="bx1">[__</span><span class="rb">|</span><span class="bx1">__]</span>  <span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span>  <span class="bx3">[=</span><span class="rb">|</span><span class="bx3">=]</span> <span class="bx4">[__</span><span class="rbw">|</span><span class="bx4">__]</span>             
+   <i class="w gd">▂</i><i class="w gd">▂</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><span class="bx2">[=</span><span class="rbw">|</span><span class="bx2">=]</span> <span class="bx1">[__</span><span class="rb">|</span><span class="bx1">__]</span><i class="w gd">▁</i><i class="w gd">▂</i><span class="tr">|</span><span class="tr2">###</span><span class="tr">|</span><i class="w gd">▁</i><i class="w gd">▁</i><span class="bx3">[=</span><span class="rb">|</span><span class="bx3">=]</span><i class="w gd">▁</i><span class="bx4">[__</span><span class="rbw">|</span><span class="bx4">__]</span><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▁</i><i class="w gd">▂</i><i class="w gd">▂</i><i class="w gd">▂</i><i class="w gd">▂</i>   
    <i class="w gd3">▀</i><i class="w gd3">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd2">▀</i><i class="w gd3">▀</i><i class="w gd3">▀</i>   
                                                              
-                <span class="L0 lc" style="animation-delay:-0.00s">M</span> <span class="L0 lc" style="animation-delay:-0.50s">E</span> <span class="L0 lc" style="animation-delay:-1.00s">R</span> <span class="L0 lc" style="animation-delay:-1.50s">R</span> <span class="L0 lc" style="animation-delay:-2.00s">Y</span>   <span class="L0 lc" style="animation-delay:-3.00s">C</span> <span class="L0 lc" style="animation-delay:-3.50s">H</span> <span class="L0 lc" style="animation-delay:-4.00s">R</span> <span class="L0 lc" style="animation-delay:-4.50s">I</span> <span class="L0 lc" style="animation-delay:-5.00s">S</span> <span class="L0 lc" style="animation-delay:-5.50s">T</span> <span class="L0 lc" style="animation-delay:-6.00s">M</span> <span class="L0 lc" style="animation-delay:-6.50s">A</span> <span class="L0 lc" style="animation-delay:-7.00s">S</span>                
+             <span class="y tw" style="animation-duration:1.4s">*</span>  <span class="L0 lc" style="animation-delay:-0.00s">M</span> <span class="L0 lc" style="animation-delay:-0.50s">E</span> <span class="L0 lc" style="animation-delay:-1.00s">R</span> <span class="L0 lc" style="animation-delay:-1.50s">R</span> <span class="L0 lc" style="animation-delay:-2.00s">Y</span>   <span class="L0 lc" style="animation-delay:-3.00s">C</span> <span class="L0 lc" style="animation-delay:-3.50s">H</span> <span class="L0 lc" style="animation-delay:-4.00s">R</span> <span class="L0 lc" style="animation-delay:-4.50s">I</span> <span class="L0 lc" style="animation-delay:-5.00s">S</span> <span class="L0 lc" style="animation-delay:-5.50s">T</span> <span class="L0 lc" style="animation-delay:-6.00s">M</span> <span class="L0 lc" style="animation-delay:-6.50s">A</span> <span class="L0 lc" style="animation-delay:-7.00s">S</span>  <span class="y tw" style="animation-duration:1.4s;animation-delay:-0.7s">*</span>             
                   <span class="ny">~ and a happy new year ~</span>                   
                                                              
                                                              
                                                              
- <span class="pr">santa@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ </span><i class="w cur blink">█</i>                                       </pre>
+ <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ </span><i class="w cur blink">█</i>                                      </pre>
     </div>
   </div>
 
@@ -178,42 +193,67 @@
   'use strict';
 
   const W = 61, CX = 30;
+  const USER = '박성준';
   const screen = document.getElementById('screen');
   const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
   const rnd = Math.random;
   const pick = a => a[Math.floor(rnd() * a.length)];
   const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+  // 한글 같은 전각 문자는 고정폭 화면에서 2칸을 차지하므로 따로 구분한다
+  const WIDE = /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦]/;
 
   const CMD = './merry-christmas';
 
   // ---------- 트리 모델: 로드할 때마다 장식 배치가 달라지도록 한 번만 무작위 생성
   const TIERS = [[1, 4], [3, 7], [5, 10], [7, 13]];   // 단마다 [시작 반폭, 끝 반폭]
   const RAY_Y = 2, STAR_Y = 3, TREE_TOP = 4;
-  const tree = [];
-  const orn = new Set();
+  const hwAt = {};
+  const tiers = [];
   let ty = TREE_TOP;
   for (const [from, to] of TIERS) {
-    for (let hw = from; hw <= to; hw++, ty++) {
-      for (let dx = -hw; dx <= hw; dx++) {
-        const x = CX + dx;
-        if (dx === -hw) { tree.push({ x, y: ty, kind: 'edge', ch: '/' }); continue; }
-        if (dx === hw)  { tree.push({ x, y: ty, kind: 'edge', ch: '\\' }); continue; }
-        // 한 줄 내려갈 때 2칸 왼쪽으로 → 화면상 약 45° 대각선 띠가 된다
-        if (hw > 1 && (((dx + 2 * ty) % 12) + 12) % 12 < 2) { tree.push({ x, y: ty, kind: 'garland' }); continue; }
-        // 오너먼트끼리 붙어 뭉치지 않도록 왼쪽·윗줄 이웃을 피한다
-        const free = ![`${x - 1},${ty}`, `${x - 1},${ty - 1}`, `${x},${ty - 1}`, `${x + 1},${ty - 1}`].some(k => orn.has(k));
-        if (hw > 1 && free && rnd() < 0.17) {
-          orn.add(`${x},${ty}`);
-          tree.push({ x, y: ty, kind: 'orn', ch: pick(['o', 'o', 'o', '@', 'O']),
-                      color: pick(['r', 'y', 'b', 'p', 'c', 'o']), ph: rnd() * 6.283, sp: 1.2 + rnd() * 2.8 });
-          continue;
-        }
-        tree.push({ x, y: ty, kind: 'leaf', ch: rnd() < 0.14 ? '^' : '*', cls: pick(['g1', 'g1', 'g2', 'g3']), ph: rnd() * 1000 });
-      }
-    }
+    const top = ty;
+    for (let hw = from; hw <= to; hw++, ty++) hwAt[ty] = hw;
+    tiers.push({ top, bottom: ty - 1 });
   }
   const BASE_Y = ty;              // 기둥·선물 시작 줄
   const GROUND_Y = BASE_Y + 3;
+
+  // 전구 줄: 맨 위 단을 뺀 각 단에, 양 끝에서 가운데로 처지는 곡선을 따라 2칸 간격으로 전구를 단다
+  const bulbAt = new Map();
+  let bulbN = 0;
+  for (const { top, bottom } of tiers.slice(1)) {
+    const ys = top + 1, span = hwAt[ys] - 1, depth = Math.min(3, bottom - ys - 1);
+    for (let dx = -span; dx <= span; dx += 2) {
+      bulbAt.set((ys + Math.round(depth * (1 - (dx / span) ** 2))) * W + CX + dx, bulbN++);
+    }
+  }
+
+  const tree = [];
+  const orn = new Set();
+  for (const { top, bottom } of tiers) {
+    for (let y = top; y <= bottom; y++) {
+      const hw = hwAt[y];
+      // 각 단 맨 아랫줄의 양 끝은 눈 쌓인 가지 끝처럼 하얗게 (큰 단은 2칸, 작은 단은 1칸)
+      const tipFrom = y === bottom ? hw - (hw >= 10 ? 2 : 1) : Infinity;
+      for (let dx = -hw; dx <= hw; dx++) {
+        const x = CX + dx, ad = Math.abs(dx);
+        if (ad === hw) { tree.push({ x, y, kind: 'edge', ch: dx < 0 ? '/' : '\\', cls: ad >= tipFrom ? 'fr' : 'e' }); continue; }
+        if (bulbAt.has(y * W + x)) { tree.push({ x, y, kind: 'bulb', k: bulbAt.get(y * W + x) }); continue; }
+        if (ad >= tipFrom || (ad === hw - 1 && rnd() < 0.2)) { tree.push({ x, y, kind: 'leaf', ch: '*', cls: 'fr2', ph: rnd() * 1000 }); continue; }
+        // 한 줄 내려갈 때 2칸 왼쪽으로 → 화면상 약 45° 대각선 띠가 된다
+        if (hw > 1 && (((dx + 2 * y) % 12) + 12) % 12 < 2) { tree.push({ x, y, kind: 'garland' }); continue; }
+        // 오너먼트끼리 붙어 뭉치지 않도록 왼쪽·윗줄 이웃을 피한다
+        const free = ![`${x - 1},${y}`, `${x - 1},${y - 1}`, `${x},${y - 1}`, `${x + 1},${y - 1}`].some(k => orn.has(k));
+        if (hw > 1 && free && rnd() < 0.12) {
+          orn.add(`${x},${y}`);
+          tree.push({ x, y, kind: 'orn', ch: pick(['@', 'O', '@']),
+                      color: pick(['r', 'y', 'b', 'p', 'c', 'o']), ph: rnd() * 6.283, sp: 1.2 + rnd() * 2.8 });
+          continue;
+        }
+        tree.push({ x, y, kind: 'leaf', ch: rnd() < 0.14 ? '^' : '*', cls: pick(['g1', 'g1', 'g2', 'g3']), ph: rnd() * 1000 });
+      }
+    }
+  }
   const TITLE = 'M E R R Y   C H R I S T M A S';
   const TITLE_Y = GROUND_Y + 2;
   const NY_Y = TITLE_Y + 1;
@@ -227,8 +267,11 @@
     { x: CX + 5,  w: 5, box: 'bx3', rb: 'rb' },
     { x: CX + 11, w: 7, box: 'bx4', rb: 'rbw' },
   ];
-  const RAYS = [[CX - 2, RAY_Y, '\\'], [CX, RAY_Y, '|'], [CX + 2, RAY_Y, '/'],
-                [CX - 3, STAR_Y, '-'], [CX - 2, STAR_Y, '-'], [CX + 2, STAR_Y, '-'], [CX + 3, STAR_Y, '-']];
+  // 별빛 줄기: [x, y, 문자, 시계 위치 0~5] — 아래쪽(3)은 트리에 가려 비워 둔다
+  const RAYS = [[CX, RAY_Y, '|', 0], [CX + 2, RAY_Y, '/', 1], [CX + 2, STAR_Y, '-', 2], [CX + 3, STAR_Y, '-', 2],
+                [CX - 3, STAR_Y, '-', 4], [CX - 2, STAR_Y, '-', 4], [CX - 2, RAY_Y, '\\', 5]];
+  const BULB = ['r', 'y', 'b', 'p'];
+  const PILE = ['', '▁', '▂', '▃'];
 
   const now0 = new Date();
   // 1월이면 막 시작된 해, 그 외에는 다가올 해를 축하한다
@@ -254,16 +297,57 @@
   }
   const FLAKE = [['.', 'sn1'], ['·', 'sn2'], ['*', 'sn3']];
 
+  // ---------- 밤하늘(깜빡이는 별·별똥별), 꼭대기 별 주변 반짝이, 바닥에 쌓이는 눈
+  const SKY_BOTTOM = 14;
+  const sky = Array.from({ length: 24 }, () => ({ x: Math.floor(rnd() * W), y: 1 + Math.floor(rnd() * SKY_BOTTOM),
+                                                  ph: rnd() * 6.283, sp: 0.5 + rnd() * 1.5 }));
+  const sparks = [];
+  let shoot = null, nextShoot = 3 + rnd() * 4;
+  const pile = new Array(W).fill(0);
+
+  function update(dt) {
+    for (let i = 0; i < flakes.length; i++) {
+      const f = flakes[i];
+      f.y += f.vy * dt;
+      if (f.y >= GROUND_Y) {
+        const x = Math.round(f.x);
+        if (x >= 3 && x < W - 3) pile[x] = Math.min(3.9, pile[x] + 0.8);
+        flakes[i] = spawn(-rnd() * 3);
+      }
+    }
+    // 쌓인 양에 비례해 녹여서 바닥이 통째로 덮이지 않고 울퉁불퉁하게 유지되게 한다
+    for (let x = 0; x < W; x++) pile[x] -= pile[x] * 0.03 * dt;
+
+    for (let i = sparks.length - 1; i >= 0; i--) if ((sparks[i].life -= dt) <= 0) sparks.splice(i, 1);
+    if (rnd() < dt * 5) sparks.push({ x: CX + Math.round((rnd() - 0.5) * 12), y: 1 + Math.floor(rnd() * 3), life: 0.3 + rnd() * 0.3 });
+
+    if (!shoot) {
+      if ((nextShoot -= dt) <= 0) shoot = { x: 42 + rnd() * 16, y: 1, vx: -(22 + rnd() * 8), vy: 6 + rnd() * 2 };
+    } else {
+      shoot.x += shoot.vx * dt; shoot.y += shoot.vy * dt;
+      if (shoot.x < 1 || shoot.y > SKY_BOTTOM - 2) { shoot = null; nextShoot = 6 + rnd() * 8; }
+    }
+  }
+
   // ---------- 화면 버퍼
   const chs = Array.from({ length: H }, () => new Array(W));
   const cls = Array.from({ length: H }, () => new Array(W));
   const clear = () => { for (let y = 0; y < H; y++) { chs[y].fill(' '); cls[y].fill(''); } };
   const put = (x, y, c, k) => { if (x >= 0 && x < W && y >= 0 && y < H) { chs[y][x] = c; cls[y][x] = k || ''; } };
-  const text = (x, y, s, k) => { for (let i = 0; i < s.length; i++) put(x + i, y, s[i], k); return x + s.length; };
+  // 전각 문자(한글)는 2칸: 첫 칸에 글자, 둘째 칸은 빈 문자열('')로 자리만 잡는다
+  const text = (x, y, s, k) => {
+    for (const c of s) {
+      put(x, y, c, k);
+      if (WIDE.test(c)) put(++x, y, '', k);
+      x++;
+    }
+    return x;
+  };
+  const isFree = (x, y) => x >= 0 && x < W && y >= 0 && y < H && chs[y][x] === ' ' && cls[y][x] === '';
   const centerX = s => CX - Math.floor(s.length / 2);
 
   function drawPrompt(y) {
-    let x = text(1, y, 'santa@north-pole', 'pr');
+    let x = text(1, y, USER + '@north-pole', 'pr');
     x = text(x, y, ':', 'cmd');
     x = text(x, y, '~', 'pa');
     return text(x, y, '$ ', 'cmd');
@@ -296,10 +380,11 @@
     const shown = Math.floor((e - T.tree) / T.rowStep);
     const vis = y => e >= T.tree && (y - RAY_Y) < shown;
 
-    RAYS.forEach(([x, y, c], i) => {
+    RAYS.forEach(([x, y, c, pos]) => {
       if (!vis(y)) return;
-      const v = Math.sin(t * 2.2 + i * 1.7);
-      if (v > 0.1) put(x, y, c, 'ray'); else if (v > -0.6) put(x, y, c, 'rayd');
+      // 빛이 시계 방향으로 돌며 줄기를 하나씩 훑고 지나간다
+      const since = (((t * 4 - pos) % 6) + 6) % 6;
+      put(x, y, c, since < 1 ? 'ray' : since < 2.5 ? 'rayd' : 'rayx');
     });
     if (vis(STAR_Y)) {
       const v = Math.sin(t * 2.6);
@@ -309,7 +394,8 @@
     for (const c of tree) {
       if (!vis(c.y)) continue;
       switch (c.kind) {
-        case 'edge': put(c.x, c.y, c.ch, 'e'); break;
+        case 'edge': put(c.x, c.y, c.ch, c.cls); break;
+        case 'bulb': put(c.x, c.y, 'o', BULB[(c.k + Math.floor(t * 2.5)) % 4] + ' on'); break;
         case 'garland': {
           const lit = (((c.y - t * 6) % 6) + 6) % 6 < 1.5;
           put(c.x, c.y, '~', lit ? 't2' : 't');
@@ -350,6 +436,10 @@
         const d = Math.abs(x - CX);
         put(x, GROUND_Y, '▀', d > 25 ? 'gd3' : d > 21 ? 'gd2' : 'gd');
       }
+      for (let x = 3; x < W - 3; x++) {
+        const lv = Math.floor(pile[x]);
+        if (lv > 0 && isFree(x, GROUND_Y - 1)) put(x, GROUND_Y - 1, PILE[lv], 'gd');
+      }
     }
 
     // 3) 문구
@@ -359,6 +449,11 @@
       for (let i = 0; i < n; i++) {
         if (TITLE[i] === ' ') continue;
         put(x0 + i, TITLE_Y, TITLE[i], 'L' + ((i + Math.floor(t * 4)) % 4));
+      }
+      if (n === TITLE.length) {
+        const a = Math.sin(t * 3) > 0;
+        put(x0 - 3, TITLE_Y, '*', a ? 'y on' : 'y x');
+        put(x0 + TITLE.length + 2, TITLE_Y, '*', a ? 'y x' : 'y on');
       }
     }
     if (e >= T.ny) {
@@ -383,7 +478,23 @@
       if (blink) put(x, END_Y, '█', 'cur');
     }
 
-    // 4) 눈은 빈 칸에만 그려서 트리·글자 뒤로 지나가게 한다
+    // 4) 밤하늘 장식과 눈은 빈 칸에만 그려서 트리·글자 뒤로 지나가게 한다
+    for (const s of sky) {
+      if (!isFree(s.x, s.y)) continue;
+      const v = Math.sin(t * s.sp + s.ph);
+      if (v > 0.7) put(s.x, s.y, '+', 'sk2'); else if (v > -0.3) put(s.x, s.y, '.', 'sk1');
+    }
+    if (shoot) {
+      const hx = Math.round(shoot.x), hy = Math.round(shoot.y);
+      if (isFree(hx, hy)) put(hx, hy, '*', 'ss');
+      for (let i = 1; i <= 5; i++) {
+        const x = Math.round(shoot.x - shoot.vx * i * 0.03), y = Math.round(shoot.y - shoot.vy * i * 0.03);
+        if (isFree(x, y)) put(x, y, i <= 2 ? '-' : '.', i <= 2 ? 'ssd' : 'sk1');
+      }
+    }
+    if (vis(STAR_Y)) {
+      for (const s of sparks) if (isFree(s.x, s.y)) put(s.x, s.y, s.life > 0.18 ? '+' : '.', s.life > 0.18 ? 'sp' : 'ray');
+    }
     for (const f of flakes) {
       const x = Math.round(f.x + Math.sin(t * f.fr + f.ph) * f.amp);
       const y = Math.floor(f.y);
@@ -403,7 +514,8 @@
       const flush = () => { if (run) line += rk ? `<span class="${rk}">${run}</span>` : run; run = ''; };
       for (let x = 0; x < W; x++) {
         const c = chs[y][x], k = cls[y][x];
-        if (c.charCodeAt(0) > 127) { flush(); rk = null; line += `<i class="w ${k}">${c}</i>`; continue; }
+        if (c === '') continue;   // 전각 문자의 둘째 칸
+        if (c.charCodeAt(0) > 127) { flush(); rk = null; line += `<i class="${WIDE.test(c) ? 'w2' : 'w'} ${k}">${c}</i>`; continue; }
         if (k !== rk) { flush(); rk = k; }
         run += ESC[c] || c;
       }
@@ -411,14 +523,6 @@
       out.push(line);
     }
     return out.join('\n');
-  }
-
-  function updateSnow(dt) {
-    for (let i = 0; i < flakes.length; i++) {
-      const f = flakes[i];
-      f.y += f.vy * dt;
-      if (f.y >= GROUND_Y) flakes[i] = spawn(-rnd() * 3);
-    }
   }
 
   // ---------- 창 크기에 맞춰 글자 크기 조절
@@ -446,7 +550,7 @@
   function loop(nowMs) {
     requestAnimationFrame(loop);
     if (nowMs - last < 30) return;
-    updateSnow(Math.min(0.1, (nowMs - last) / 1000));
+    update(Math.min(0.1, (nowMs - last) / 1000));
     last = nowMs;
     render(nowMs);
   }
