@@ -89,8 +89,6 @@
         .screen-wrap { position: relative; font-size: 16px; font-size: min(18px, calc((100vw - 72px) / 37), calc((100vh - 104px) / 45)); }
         #screen { position: relative; z-index: 1; display: block; padding: 14px 18px 18px; line-height: 1.2; white-space: pre; font-family: inherit; font-size: inherit; }
         @media (max-width: 599px) { #screen { padding: 10px 10px 14px; } }
-        /* 선물 상자를 연달아 눌러도 폰이 화면을 확대하거나 회색으로 깜빡이지 않게 */
-        .js #screen { touch-action: manipulation; -webkit-tap-highlight-color: transparent; }
 
         /* ---- JS 없이 보이는 정적 화면용: CSS 애니메이션과 CSS 눈 (JS가 돌면 매 프레임 다시 그리므로 쓰이지 않음) ---- */
         .snow { position: absolute; top: 0; right: 0; bottom: 0; left: 0; overflow: hidden; pointer-events: none; z-index: 0; }
@@ -170,17 +168,7 @@
         /* text */
         .L0, .L1, .L2, .L3 { font-weight: 700; text-shadow: 0 0 .4em currentColor; }
         .L0 { color: #ff6b6b; } .L1 { color: #ffd43b; } .L2 { color: #69db7c; } .L3 { color: #f8f9fa; }
-        /* 크리스마스 0시 축하: 화면 전체가 한 번 하얗게 번쩍이고 터미널 창이 흔들린다 (JS가 boom 클래스를 잠깐 붙인다) */
-        .boom-flash { position: fixed; inset: 0; z-index: 50; pointer-events: none; background: #fff; opacity: 0; }
-        .boom .boom-flash { animation: boomflash 1.4s ease-out; }
-        @keyframes boomflash { 0% { opacity: .85; } 100% { opacity: 0; } }
-        .boom .term { animation: boomshake .7s ease-out; }
-        @keyframes boomshake {
-            0%, 100% { transform: translate(0, 0); } 15% { transform: translate(-8px, 4px); } 30% { transform: translate(7px, -5px); }
-            45% { transform: translate(-5px, 3px); } 60% { transform: translate(4px, -2px); } 80% { transform: translate(-2px, 1px); }
-        }
         .ny { color: #e9c46a; } .lab { color: #66759a; } .num { color: #ffd8a8; }
-        .notice { color: #a5d8ff; }
         .msg { color: #ffffff; font-weight: 700; text-shadow: 0 0 6px rgba(255,255,255,.85), 0 0 14px rgba(165,216,255,.7); }
         /* 맨 아래 프롬프트 입력: 보이지 않는 입력칸을 프롬프트 줄 위에 겹쳐 두고 글자는 화면(그리드)에 그린다.
            입력칸 글자가 16px보다 작으면 iOS가 포커스할 때 화면을 확대하므로 16px로 둔다. JS가 없으면 숨긴다 */
@@ -207,13 +195,13 @@
         <span class="dot" style="background:#ff5f57"></span>
         <span class="dot" style="background:#febc2e"></span>
         <span class="dot" style="background:#28c840"></span>
-        <span class="title">박성준@north-pole: ~ — merry-christmas</span>
+        <span class="title">박성준@__june.27: ~ — merry-christmas</span>
         <button class="music" id="music" type="button" aria-pressed="false" aria-label="배경음악 켜기/끄기">♪ music</button>
     </div>
     <div class="screen-wrap">
         <div class="snow" aria-hidden="true"><i class="sn1" style="left:84.6%;animation-duration:16.5s,3.9s;animation-delay:-16.2s,-3.2s">·</i><i class="sn1" style="left:41.8%;animation-duration:18.9s,3.6s;animation-delay:-14.8s,-3.1s">·</i><i class="sn2" style="left:57.0%;animation-duration:13.6s,2.3s;animation-delay:-13.3s,-1.2s">•</i><i class="sn1" style="left:13.3%;animation-duration:16.7s,3.7s;animation-delay:-7.5s,-2.2s">·</i><i class="sn2" style="left:94.3%;animation-duration:11.6s,3.0s;animation-delay:-6.8s,-3.0s">•</i><i class="sn2" style="left:18.0%;animation-duration:13.5s,2.6s;animation-delay:-12.4s,-1.6s">•</i><i class="sn1" style="left:68.6%;animation-duration:18.3s,2.9s;animation-delay:-2.2s,-0.6s">·</i><i class="sn3" style="left:38.0%;animation-duration:7.1s,2.1s;animation-delay:-0.3s,-2.0s">*</i><i class="sn1" style="left:49.7%;animation-duration:18.9s,4.8s;animation-delay:-11.4s,-0.4s">·</i><i class="sn1" style="left:30.1%;animation-duration:18.6s,2.7s;animation-delay:-9.4s,-2.1s">·</i><i class="sn1" style="left:60.1%;animation-duration:19.0s,4.7s;animation-delay:-11.0s,-0.6s">·</i><i class="sn1" style="left:16.2%;animation-duration:18.4s,3.7s;animation-delay:-3.6s,-1.2s">·</i><i class="sn2" style="left:57.7%;animation-duration:12.0s,2.3s;animation-delay:-8.2s,-0.0s">•</i><i class="sn3" style="left:20.3%;animation-duration:8.3s,4.8s;animation-delay:-0.1s,-1.4s">*</i><i class="sn2" style="left:21.0%;animation-duration:10.3s,4.2s;animation-delay:-7.2s,-2.4s">•</i><i class="sn2" style="left:33.8%;animation-duration:13.4s,3.0s;animation-delay:-2.3s,-1.8s">•</i><i class="sn2" style="left:46.6%;animation-duration:10.2s,3.0s;animation-delay:-10.1s,-1.2s">•</i><i class="sn1" style="left:75.9%;animation-duration:17.2s,3.8s;animation-delay:-8.1s,-2.7s">·</i><i class="sn1" style="left:96.1%;animation-duration:15.9s,4.3s;animation-delay:-6.9s,-1.3s">·</i><i class="sn2" style="left:76.5%;animation-duration:11.2s,2.2s;animation-delay:-9.8s,-1.8s">•</i><i class="sn3" style="left:93.5%;animation-duration:6.3s,4.6s;animation-delay:-4.2s,-3.8s">*</i><i class="sn3" style="left:59.0%;animation-duration:6.2s,4.1s;animation-delay:-2.9s,-0.2s">*</i><i class="sn2" style="left:12.9%;animation-duration:12.1s,2.6s;animation-delay:-10.7s,-3.9s">•</i><i class="sn3" style="left:10.5%;animation-duration:7.8s,2.2s;animation-delay:-4.5s,-3.8s">*</i><i class="sn1" style="left:59.9%;animation-duration:17.3s,3.0s;animation-delay:-9.8s,-0.6s">·</i><i class="sn3" style="left:40.9%;animation-duration:6.7s,4.4s;animation-delay:-1.6s,-0.2s">*</i><i class="sn3" style="left:61.8%;animation-duration:6.8s,2.4s;animation-delay:-2.6s,-3.0s">*</i><i class="sn3" style="left:87.2%;animation-duration:8.2s,4.1s;animation-delay:-6.1s,-0.7s">*</i><i class="sn1" style="left:9.8%;animation-duration:16.6s,4.7s;animation-delay:-11.1s,-0.7s">·</i><i class="sn1" style="left:94.4%;animation-duration:19.4s,2.5s;animation-delay:-10.8s,-3.4s">·</i><i class="sn1" style="left:87.5%;animation-duration:19.1s,2.9s;animation-delay:-0.0s,-2.5s">·</i><i class="sn1" style="left:36.7%;animation-duration:19.8s,4.3s;animation-delay:-1.1s,-1.0s">·</i><i class="sn1" style="left:83.7%;animation-duration:19.9s,3.4s;animation-delay:-17.2s,-2.1s">·</i><i class="sn3" style="left:5.6%;animation-duration:7.1s,3.9s;animation-delay:-0.8s,-2.8s">*</i><i class="sn3" style="left:62.2%;animation-duration:6.3s,2.7s;animation-delay:-2.0s,-2.2s">*</i><i class="sn1" style="left:36.3%;animation-duration:19.8s,4.1s;animation-delay:-4.0s,-2.0s">·</i><i class="sn2" style="left:72.5%;animation-duration:13.5s,2.7s;animation-delay:-13.0s,-1.9s">•</i><i class="sn3" style="left:45.2%;animation-duration:8.7s,2.7s;animation-delay:-5.1s,-3.8s">*</i><i class="sn1" style="left:51.2%;animation-duration:15.1s,3.1s;animation-delay:-2.6s,-0.5s">·</i><i class="sn3" style="left:56.9%;animation-duration:8.8s,3.8s;animation-delay:-2.1s,-3.6s">*</i><i class="sn2" style="left:27.2%;animation-duration:11.3s,4.2s;animation-delay:-7.6s,-1.0s">•</i><i class="sn2" style="left:61.1%;animation-duration:12.5s,4.4s;animation-delay:-10.4s,-3.6s">•</i><i class="sn2" style="left:91.7%;animation-duration:12.7s,3.0s;animation-delay:-5.4s,-1.8s">•</i><i class="sn3" style="left:33.2%;animation-duration:7.1s,3.1s;animation-delay:-1.2s,-3.2s">*</i><i class="sn2" style="left:41.0%;animation-duration:12.7s,3.7s;animation-delay:-3.9s,-2.5s">•</i><i class="sn1" style="left:35.1%;animation-duration:20.3s,4.3s;animation-delay:-6.0s,-2.2s">·</i><i class="sn2" style="left:28.7%;animation-duration:10.1s,3.8s;animation-delay:-2.8s,-3.2s">•</i><i class="sn3" style="left:5.7%;animation-duration:7.9s,2.5s;animation-delay:-4.6s,-2.0s">*</i><i class="sn3" style="left:60.7%;animation-duration:7.5s,2.2s;animation-delay:-0.7s,-2.1s">*</i><i class="sn1" style="left:56.6%;animation-duration:18.2s,4.2s;animation-delay:-12.9s,-3.8s">·</i><i class="sn2" style="left:9.4%;animation-duration:12.2s,3.7s;animation-delay:-7.4s,-0.2s">•</i><i class="sn1" style="left:35.3%;animation-duration:20.8s,4.8s;animation-delay:-5.2s,-2.5s">·</i><i class="sn1" style="left:40.5%;animation-duration:18.3s,3.6s;animation-delay:-6.3s,-0.9s">·</i><i class="sn1" style="left:21.0%;animation-duration:18.4s,4.5s;animation-delay:-3.7s,-1.4s">·</i><i class="sn1" style="left:79.3%;animation-duration:19.6s,2.5s;animation-delay:-11.1s,-3.2s">·</i><i class="sn2" style="left:44.3%;animation-duration:11.3s,4.2s;animation-delay:-0.1s,-4.0s">•</i><i class="sn1" style="left:34.2%;animation-duration:15.9s,4.4s;animation-delay:-8.7s,-3.8s">·</i><i class="sn1" style="left:1.2%;animation-duration:18.3s,2.0s;animation-delay:-15.3s,-2.7s">·</i><i class="sn2" style="left:85.9%;animation-duration:13.0s,2.7s;animation-delay:-2.0s,-0.3s">•</i><i class="sn3" style="left:14.4%;animation-duration:8.9s,4.7s;animation-delay:-7.2s,-1.5s">*</i><i class="sn1" style="left:31.9%;animation-duration:20.2s,4.8s;animation-delay:-19.3s,-1.1s">·</i><i class="sn2" style="left:1.6%;animation-duration:13.2s,3.2s;animation-delay:-1.6s,-3.7s">•</i><i class="sn2" style="left:73.0%;animation-duration:12.1s,2.8s;animation-delay:-10.4s,-2.0s">•</i><i class="sn1" style="left:16.5%;animation-duration:15.9s,2.3s;animation-delay:-6.9s,-2.1s">·</i><i class="sn1" style="left:77.1%;animation-duration:19.6s,4.3s;animation-delay:-15.4s,-2.3s">·</i><i class="sn1" style="left:34.5%;animation-duration:19.0s,2.6s;animation-delay:-18.7s,-1.6s">·</i><i class="sn3" style="left:84.2%;animation-duration:8.9s,4.0s;animation-delay:-3.6s,-2.0s">*</i><i class="sn2" style="left:28.5%;animation-duration:13.9s,4.7s;animation-delay:-0.4s,-1.9s">•</i><i class="sn1" style="left:83.2%;animation-duration:20.0s,2.6s;animation-delay:-3.2s,-2.8s">·</i><i class="sn2" style="left:46.2%;animation-duration:10.5s,3.0s;animation-delay:-8.2s,-2.0s">•</i><i class="sn1" style="left:27.3%;animation-duration:20.2s,4.5s;animation-delay:-17.2s,-1.4s">·</i><i class="sn3" style="left:22.5%;animation-duration:8.0s,4.5s;animation-delay:-5.2s,-1.4s">*</i><i class="sn3" style="left:31.1%;animation-duration:6.9s,4.2s;animation-delay:-0.8s,-0.1s">*</i><i class="sn1" style="left:11.1%;animation-duration:20.3s,3.5s;animation-delay:-6.9s,-3.2s">·</i><i class="sn3" style="left:92.1%;animation-duration:8.9s,4.8s;animation-delay:-4.1s,-3.2s">*</i><i class="sn3" style="left:92.0%;animation-duration:6.1s,2.1s;animation-delay:-1.6s,-1.9s">*</i><i class="sn3" style="left:12.4%;animation-duration:8.2s,2.3s;animation-delay:-2.4s,-0.1s">*</i><i class="sn1" style="left:44.5%;animation-duration:17.7s,3.2s;animation-delay:-3.4s,-3.0s">·</i><i class="sn1" style="left:52.8%;animation-duration:18.6s,2.8s;animation-delay:-13.7s,-3.3s">·</i><i class="sn3" style="left:44.4%;animation-duration:7.6s,3.4s;animation-delay:-6.6s,-1.0s">*</i></div>
         <!-- 아래 내용은 JS가 꺼진 환경용 정적 화면. JS가 돌면 첫 프레임에서 통째로 교체된다 -->
-        <pre id="screen" role="img" aria-label="반짝이는 크리스마스 트리 애니메이션"> <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ ./merry-christmas</span>
+        <pre id="screen" role="img" aria-label="반짝이는 크리스마스 트리 애니메이션"> <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@__june.27</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ ./merry-christmas</span>
                            <span class="sp spk" style="animation-duration:2.8s;animation-delay:-4.4s">+</span> <span class="sp spk" style="animation-duration:2.9s;animation-delay:-1.4s">+</span>    <span class="sk1 tw3" style="animation-duration:4.1s;animation-delay:-5.7s">.</span>
                           <span class="sp spk" style="animation-duration:2.3s;animation-delay:-4.4s">+</span><span class="sp spk" style="animation-duration:3.5s;animation-delay:-0.4s">+</span><span class="rs" style="animation-delay:-0.25s">\</span> <span class="rs" style="animation-delay:-1.50s">|</span> <span class="rs" style="animation-delay:-1.25s">/</span><span class="sp spk" style="animation-duration:2.5s;animation-delay:-2.8s">+</span>  <span class="sp spk" style="animation-duration:4.4s;animation-delay:-0.3s">+</span>
                       <span class="sk1 tw3" style="animation-duration:4.4s;animation-delay:-5.8s">.</span>    <span class="rs" style="animation-delay:-0.50s">-</span><span class="rs" style="animation-delay:-0.50s">-</span> <i class="w star pulse">★</i> <span class="rs" style="animation-delay:-1.00s">-</span><span class="rs" style="animation-delay:-1.00s">-</span>
@@ -249,7 +237,7 @@
 
 
 
- <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@north-pole</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ </span><i class="w cur blink">█</i>                                      </pre>
+ <i class="w2 pr">박</i><i class="w2 pr">성</i><i class="w2 pr">준</i><span class="pr">@__june.27</span><span class="cmd">:</span><span class="pa">~</span><span class="cmd">$ </span><i class="w cur blink">█</i>                                      </pre>
         <form id="say" autocomplete="off"><input id="cmd" type="text" maxlength="200" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" enterkeyhint="send" aria-label="눈처럼 내릴 문구 입력"></form>
     </div>
 </div>
@@ -356,14 +344,6 @@
         const CD_Y = NY_Y + 2;
         const END_Y = CD_Y + 2;
         const H = END_Y + 1;
-        // 고정 안내 문구: 카운트다운과 프롬프트 사이 빈 줄에 하나씩 번갈아 보여 준다 (DB에 저장하지 않음, 방명록 눈과 별개).
-        // 한 줄 61칸(한글 1자 = 2칸) 안에 들어가게 쓴다. 이모지 뒤의 보이지 않는 표시 기호(U+FE0F)는 칸 계산이 어긋나 빼고 그린다
-        const NOTICE = [
-            '익명이니 자유롭게 방명록을 남겨주세요!',
-            '박성준 월드에 오신 걸 환영합니다🎄',
-        ].map(s => s.replace(/\uFE0F/g, ''));
-        const NOTICE_Y = CD_Y + 1;
-        const NOTICE_MS = 4500;   // 문구 하나를 보여 주는 시간
 
         // wbox·wrb: 화이트 크리스마스 때의 상자·리본 색 (빨강·하양 교차)
         const GIFTS = [
@@ -392,28 +372,7 @@
         let t0 = performance.now() - (reduce ? 1e7 : 0);
 
         // ---------- 눈
-        // ---------- 크리스마스 0시 축하: 페이지를 열어 둔 채 12/25 0시가 되면 섬광·흔들림·불꽃놀이·눈보라를 잠깐 보여 준다
-        let boomAt = -1e9, bursts = [];   // 축하 시작 시각(performance.now 기준), 불꽃 목록
-        const BOOM_SEC = 9;               // 축하 효과 길이(초)
-        const booming = nowMs => nowMs - boomAt < BOOM_SEC * 1000;
-        function startBoom(nowMs) {
-            // 움직임 줄이기 설정이어도 똑같이 보여 준다 (사용자 결정)
-            boomAt = nowMs;
-            // 첫 불꽃은 꼭대기 별에서 크게, 나머지는 하늘 여기저기서 차례로 터진다
-            // 처음 2초는 여러 발이 한꺼번에(일제 사격), 그 뒤로는 하나둘씩 이어진다. 흰색은 눈과 섞여 안 보여서 빨강·금·초록만 쓴다
-            bursts = [{ x: CX, y: STAR_Y, at: 0, n: 32, sp: 15, cls: 'L1' }];
-            const shot = at => bursts.push({ x: 6 + rnd() * (W - 12), y: 2 + rnd() * (SKY_BOTTOM - 4), at,
-                n: 20 + Math.floor(rnd() * 10), sp: 8 + rnd() * 5, cls: pick(['L0', 'L1', 'L2']) });
-            for (let i = 0; i < 8; i++) shot(0.25 + rnd() * 1.8);
-            for (let i = 0; i < 16; i++) shot(2.2 + i * 0.4 + rnd() * 0.3);
-            if (!document.querySelector('.boom-flash')) {
-                const f = document.createElement('div'); f.className = 'boom-flash'; document.body.appendChild(f);
-            }
-            const root = document.documentElement;
-            root.classList.remove('boom'); void root.offsetWidth; root.classList.add('boom');   // 다시 붙여야 애니메이션이 새로 돈다
-            setTimeout(() => root.classList.remove('boom'), 1500);
-        }
-        const flakeTarget = () => booming(performance.now()) ? 260 : reduce ? 30 : white ? 140 : 100;   // 눈보라는 움직임 줄이기 설정이어도 똑같이
+        const flakeTarget = () => reduce ? 30 : white ? 140 : 100;
         const flakes = Array.from({ length: flakeTarget() }, () => spawn(rnd() * GROUND_Y));
         function spawn(y) {
             const r = rnd(), layer = r < 0.35 ? 0 : r < 0.7 ? 1 : 2;
@@ -445,8 +404,7 @@
         // 방명록(board): 최근 BACKLOG개를 오래된 것부터 1.2초 간격으로 하나씩 내리고, 끝까지 내린 뒤 화면의 문구가
         // 모두 바닥에 닿으면 처음부터 다시 내린다. 접속해 있는 동안 새로 들어온 문구(inbox)는 차례를 기다리지 않고 먼저 내린다
         const inbox = [], board = [];
-        let nextRelease = 0, boardAt = 0, restartAt = 0;
-        const CYCLE_PAUSE = 10000;   // 한 바퀴를 다 내린 뒤 다음 바퀴까지 쉬는 시간(ms)
+        let nextRelease = 0, boardAt = 0;
         function remember(msg, shownNow) {
             // 방금 내린 새 문구는 이번 바퀴 끝에서 곧바로 또 내려오지 않게, 이번 바퀴에서는 건너뛰고 다음 바퀴부터 돈다
             board.push({ msg, skip: shownNow });
@@ -457,13 +415,7 @@
             const nowP = performance.now();
             if (nowP >= nextRelease && nowP - t0 >= T.end) {
                 let msg = inbox.shift();
-                // 한 바퀴 끝 → 화면의 방명록 문구가 모두 내려앉고 CYCLE_PAUSE 동안 쉰 뒤 처음부터.
-                // 쉬는 동안 새 문구가 내려오면 그 문구가 다 내려앉은 때부터 다시 센다
-                if (msg === undefined && board.length && boardAt >= board.length) {
-                    if (drops.length) restartAt = 0;
-                    else if (!restartAt) restartAt = nowP + CYCLE_PAUSE;
-                    else if (nowP >= restartAt) { boardAt = 0; restartAt = 0; }
-                }
+                if (msg === undefined && board.length && boardAt >= board.length && !drops.length) boardAt = 0;   // 한 바퀴 끝 → 처음부터
                 while (msg === undefined && boardAt < board.length) { const b = board[boardAt++]; if (b.skip) b.skip = false; else msg = b.msg; }
                 if (msg !== undefined) { dropMessage(msg); nextRelease = nowP + 1200; }
             }
@@ -486,12 +438,12 @@
                 if (f.y >= GROUND_Y) {
                     const x = Math.round(f.x);
                     if (x >= 3 && x < W - 3) pile[x] = Math.min(3.9, pile[x] + (white ? 0.6 : 0.45));
-                    // 목표 수보다 많으면(눈보라가 끝난 뒤) 바닥에 닿은 눈송이부터 없애서 한꺼번에 사라지지 않게 한다
-                    if (flakes.length > flakeTarget()) { flakes.splice(i, 1); i--; } else flakes[i] = spawn(-rnd() * 3);
+                    flakes[i] = spawn(-rnd() * 3);
                 }
             }
-            // 화이트 크리스마스·눈보라 때는 눈송이를 목표 수까지 늘린다 (새 눈송이는 화면 위에서 시작)
+            // 화이트 크리스마스로 바뀌면 눈송이를 목표 수까지 늘린다 (새 눈송이는 화면 위에서 시작)
             while (flakes.length < flakeTarget()) flakes.push(spawn(-rnd() * GROUND_Y * 0.5));
+            if (flakes.length > flakeTarget()) flakes.length = flakeTarget();
             // 쌓인 양에 비례해 녹여서 바닥이 통째로 덮이지 않고 울퉁불퉁하게 유지되게 한다 (화이트 때는 덜 녹아 더 두껍게)
             for (let x = 0; x < W; x++) pile[x] -= pile[x] * (white ? 0.02 : 0.03) * dt;
 
@@ -535,7 +487,7 @@
         const centerX = s => CX - Math.floor(s.length / 2);
 
         function drawPrompt(y) {
-            let x = text(1, y, USER + '@north-pole', 'pr');
+            let x = text(1, y, USER + '@__june.27', 'pr');
             x = text(x, y, ':', 'cmd');
             x = text(x, y, '~', 'pa');
             return text(x, y, '$ ', 'cmd');
@@ -558,7 +510,7 @@
         const titleBar = document.querySelector('.title');
         function applyTheme() {
             document.documentElement.classList.toggle('white-xmas', white);
-            titleBar.textContent = `${USER}@north-pole: ~ — ${white ? 'white' : 'merry'}-christmas`;
+            titleBar.textContent = `${USER}@__june.27: ~ — ${white ? 'white' : 'merry'}-christmas`;
         }
 
         function render(nowMs) {
@@ -566,8 +518,7 @@
             const blink = Math.floor(nowMs / 530) % 2 === 0;
             const nd = nowDate();
             // 페이지를 열어 둔 채 12/25 0시가 되면 그 자리에서 화이트 크리스마스로 바뀐다
-            if (isWhite(nd) !== white) { white = !white; applyTheme(); if (white) startBoom(nowMs); }
-            const party = booming(nowMs);   // 0시 축하 중 (전구 빠르게, 별빛 계속 켜짐, 불꽃놀이)
+            if (isWhite(nd) !== white) { white = !white; applyTheme(); }
             clear();
 
             // 1) 프롬프트 + 명령어 타이핑
@@ -585,18 +536,18 @@
                 if (!vis(y)) return;
                 // 빛이 시계 방향으로 돌며 줄기를 하나씩 훑고 지나간다
                 const since = (((t * 4 - pos) % 6) + 6) % 6;
-                put(x, y, c, party || since < 1 ? 'ray' : since < 2.5 ? 'rayd' : 'rayx');
+                put(x, y, c, since < 1 ? 'ray' : since < 2.5 ? 'rayd' : 'rayx');
             });
             if (vis(STAR_Y)) {
                 const v = Math.sin(t * 2.6);
-                put(CX, STAR_Y, '★', 'star ' + (party || v > 0.5 ? 's3' : v > -0.3 ? 's2' : 's1'));
+                put(CX, STAR_Y, '★', 'star ' + (v > 0.5 ? 's3' : v > -0.3 ? 's2' : 's1'));
             }
 
             for (const c of tree) {
                 if (!vis(c.y)) continue;
                 switch (c.kind) {
                     case 'edge': put(c.x, c.y, c.ch, white ? 'fr' : c.cls); break;
-                    case 'bulb': put(c.x, c.y, 'o', (white ? BULB_W : BULB)[(c.k + Math.floor(t * (party ? 12 : 2.5))) % 4] + ' on'); break;   // 축하 중엔 빠르게 깜빡
+                    case 'bulb': put(c.x, c.y, 'o', (white ? BULB_W : BULB)[(c.k + Math.floor(t * 2.5)) % 4] + ' on'); break;
                     case 'garland': {
                         const lit = (((c.y - t * 6) % 6) + 6) % 6 < 1.5;
                         // 화이트 크리스마스: 금색 띠 대신 빨강·하양 사탕지팡이 줄무늬
@@ -672,34 +623,21 @@
                 const cd = countdown(nd);
                 if (!cd) {
                     const s = "* it's christmas today! *";
-                    if (booming(nowMs)) {   // 축하 중에는 글자마다 색이 빠르게 돈다
-                        const x0 = centerX(s);
-                        for (let i = 0; i < s.length; i++) put(x0 + i, CD_Y, s[i], 'L' + ((i + Math.floor(t * 10)) % 4));
-                    } else text(centerX(s), CD_Y, s, white ? 'wh on' : 'num on');
+                    text(centerX(s), CD_Y, s, white ? 'wh on' : 'num on');
                 } else {
                     const p2 = v => String(v).padStart(2, '0');
-                    // 크리스마스 10초 전부터는 숫자가 매초 빨강·금색으로 번갈아 빛난다
-                    const fin = cd.label === 'christmas in ' && !cd.v[0] && !cd.v[1] && !cd.v[2] && cd.v[3] <= 10;
-                    const nk = fin ? (cd.v[3] % 2 ? 'L0' : 'L1') : 'num';
-                    const parts = [[cd.label, 'lab'], [String(cd.v[0]), nk], ['d ', 'lab'], [p2(cd.v[1]), nk], ['h ', 'lab'],
-                        [p2(cd.v[2]), nk], ['m ', 'lab'], [p2(cd.v[3]), nk], ['s', 'lab']];
+                    const parts = [[cd.label, 'lab'], [String(cd.v[0]), 'num'], ['d ', 'lab'], [p2(cd.v[1]), 'num'], ['h ', 'lab'],
+                        [p2(cd.v[2]), 'num'], ['m ', 'lab'], [p2(cd.v[3]), 'num'], ['s', 'lab']];
                     let x = centerX(parts.map(p => p[0]).join(''));
                     for (const [s, k] of parts) x = text(x, CD_Y, s, k);
                 }
-            }
-            if (e >= T.end && NOTICE.length) {
-                // 타자 치듯 한 글자씩 나타났다가, NOTICE_MS 마다 다음 문구로 바뀐다
-                const k = Math.floor((e - T.end) / NOTICE_MS);
-                const chars = [...NOTICE[k % NOTICE.length]];
-                const n = reduce ? chars.length : clamp(Math.floor(((e - T.end) % NOTICE_MS) / 45), 0, chars.length);
-                text(CX - Math.floor(colsOf(chars.join('')) / 2), NOTICE_Y, chars.slice(0, n).join(''), 'notice');
             }
             if (e >= T.end) {
                 let x = drawPrompt(END_Y);
                 // 한글 조합 중에는 입력값이 잠깐 폭을 넘을 수 있어(조합이 끝나야 잘라냄), 화면에는 넘친 글자를 그리지 않는다
                 x = text(x, END_Y, clip(input.value), 'cmd');
                 if (blink) put(x, END_Y, '█', 'cur');
-                if (!input.value) text(x + 2, END_Y, coarse ? '방명록을 남기면 방명록 눈이 내려요❄️' : '방명록을 남기면 방명록 눈이 내려요❄️', 'lab');
+                if (!input.value) text(x + 2, END_Y, coarse ? '메시지를 입력하면 방명록 눈이 내려요❄️' : '메시지를 입력하면 방명록 눈이 내려요❄️', 'lab');
             }
 
             // 입력한 문구는 트리 앞으로 지나가게 그려서 읽을 수 있게 한다
@@ -715,27 +653,6 @@
                 if (!isFree(s.x, s.y)) continue;
                 const v = Math.sin(t * s.sp + s.ph);
                 if (v > 0.7) put(s.x, s.y, '+', 'sk2'); else if (v > -0.3) put(s.x, s.y, '.', 'sk1');
-            }
-            // 0시 불꽃놀이: 터진 자리에서 사방으로 퍼지며 살짝 처지고 * → + → . 로 사그라든다 (빈 칸에만 그려 트리·글자 뒤로)
-            if (booming(nowMs)) {
-                const age = (nowMs - boomAt) / 1000;
-                for (const b of bursts) {
-                    const a = age - b.at;
-                    if (a < 0 || a > 1.4) continue;
-                    const r = b.sp * a * (1 - a * 0.3);
-                    // 바깥 고리와 안쪽 고리(0.55배) 두 겹으로 그려 꽉 찬 불꽃처럼 보이게 한다
-                    for (const ring of [1, 0.55]) {
-                        for (let i = 0; i < b.n; i++) {
-                            const ang = (i + ring) / b.n * 6.283;
-                            // 글자 칸은 세로가 가로의 약 2배라 가로로 2배 퍼뜨려야 둥글게 보인다
-                            const x = Math.round(b.x + Math.cos(ang) * r * ring * 2), y = Math.round(b.y + Math.sin(ang) * r * ring + 2 * a * a);
-                            if (y < 1 || y >= GROUND_Y || !isFree(x, y)) continue;
-                            put(x, y, a < 0.5 ? '*' : a < 0.95 ? '+' : '.', a < 0.95 ? b.cls : 'sk1');
-                        }
-                    }
-                    const bx = Math.round(b.x), by = Math.round(b.y);
-                    if (a < 0.15 && isFree(bx, by)) put(bx, by, '@', 'L3');
-                }
             }
             if (shoot) {
                 const hx = Math.round(shoot.x), hy = Math.round(shoot.y);
@@ -819,7 +736,7 @@
         // ---------- 맨 아래 프롬프트에 직접 입력 → Enter 치면 그 문구가 눈처럼 내려온다
         const form = document.getElementById('say'), input = document.getElementById('cmd');
         const coarse = window.matchMedia && matchMedia('(pointer: coarse)').matches;   // 터치 기기(폰·태블릿)
-        const MAX_IN = W - colsOf(` ${USER}@north-pole:~$ `) - 1;                      // 커서 1칸을 남긴 입력 가능 폭
+        const MAX_IN = W - colsOf(` ${USER}@__june.27:~$ `) - 1;                      // 커서 1칸을 남긴 입력 가능 폭
         const clip = s => { let out = ''; for (const c of s) { if (colsOf(out + c) > MAX_IN) break; out += c; } return out; };
         // 남은 칸만큼만 더 들어가게 브라우저 글자 수 제한(maxlength)을 맞춘다 → 칸이 다 차면 입력 자체가 막힌다.
         // 한글 조합 중에는 값을 잘라내면 조합이 깨지므로 이 제한으로 막고, 조합 중이 아닐 때만 다시 계산한다
@@ -950,30 +867,6 @@
         });
         // PC는 열자마자, 또는 창 아무 데나 클릭하면 바로 입력할 수 있게 한다 (폰은 프롬프트 줄을 눌러야 키보드가 뜬다)
         document.querySelector('.term').addEventListener('click', () => { if (!coarse) input.focus({ preventScroll: true }); });
-        // 숨은 트릭: 가장 오른쪽 선물 상자를 누르면 0시 축하 효과를 다시 보여 준다. 테마는 날짜 그대로 둔다
-        // (크리스마스 전이면 평소 트리, 12/25부터는 화이트 크리스마스). 인트로 중·효과가 도는 중에는 무시한다.
-        // click 은 쓰지 않는다: 화면을 매 프레임 새로 그려서, 누른 글자 요소가 손을 떼기 전에 바뀌면 브라우저가 click 을 보내지 않는다.
-        // 대신 누른 곳과 뗀 곳을 직접 비교한다 (조금 흔들려도 되고, 스크롤하면 브라우저가 pointercancel 을 보내 취소된다)
-        const GIFT = GIFTS[GIFTS.length - 1];
-        function onGift(ev) {
-            if (performance.now() - t0 < T.end) return false;
-            // 누른 위치 → 글자 칸 좌표 (화면 크기에 따라 글자 크기·여백이 바뀌므로 그때그때 잰다)
-            const r = screen.getBoundingClientRect(), cs = getComputedStyle(screen);
-            const pl = parseFloat(cs.paddingLeft), pr = parseFloat(cs.paddingRight), pt = parseFloat(cs.paddingTop), pb = parseFloat(cs.paddingBottom);
-            const x = Math.floor((ev.clientX - r.left - pl) / ((r.width - pl - pr) / W));
-            const y = Math.floor((ev.clientY - r.top - pt) / ((r.height - pt - pb) / H));
-            // 상자(리본 줄 포함 3줄)와 손가락이 빗나가기 쉬운 둘레 1칸까지
-            return x >= GIFT.x - 1 && x <= GIFT.x + GIFT.w && y >= BASE_Y - 1 && y <= BASE_Y + 2;
-        }
-        let press = null;
-        screen.addEventListener('pointerdown', ev => { press = onGift(ev) ? { x: ev.clientX, y: ev.clientY } : null; });
-        addEventListener('pointercancel', () => { press = null; });
-        addEventListener('pointerup', ev => {
-            const p = press; press = null;
-            if (!p || Math.hypot(ev.clientX - p.x, ev.clientY - p.y) > 12 || !onGift(ev)) return;
-            const now = performance.now();
-            if (!booming(now)) startBoom(now);
-        });
         if (!coarse) input.focus({ preventScroll: true });
         listen();
         countVisit();
